@@ -7,15 +7,29 @@
 #define MAX_X 120  //480
 #define MAX_Y 80   //320
 
+enum color{
+  white,
+  black,
+  dark_grey,
+  light_grey,
+  red
+};
+
 class DrawingTablet{
   private:
-    bool pixelMatrix[MAX_X][MAX_Y];
+    TFT_eSPI tft;
+    color pixelMatrix[MAX_X][MAX_Y];
+    int prevX;
+    int prevY;
+    color prevColor;
   public:
     DrawingTablet();
-    void init();
+    void startDriver();
     void initialize();
-    void drawPixel(int x, int y);
+    void drawPixel(int x, int y, color col);
     void print();
+    void moveCursor(int x, int y);
+    int getColor(color col);
 };
 
 #endif

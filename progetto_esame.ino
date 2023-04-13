@@ -1,14 +1,18 @@
 #include "src/DrawingTablet.h"
+#include "src/Controller.h"
 
-DrawingTablet tav;
+DrawingTablet tablet;
+Controller controller;
 
 void setup(void) {
   Serial.begin(115200);
-  tav.init();
-  for (int i = 0; i < 10; i++) {
-    tav.drawPixel(i, 40);
-  }
+  //needed to start the driver
+  tablet.startDriver();
 }
 
 void loop() {
+  controller.readInput();
+  tablet.drawPixel(controller.getCursorX(), controller.getCursorY(), light_grey);
+  delay(100);
 }
+
