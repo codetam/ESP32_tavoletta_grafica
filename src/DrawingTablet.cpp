@@ -1,71 +1,82 @@
 #include "DrawingTablet.h"
 
-//initializing the constant tft
+//inizializza la costante TFT
 DrawingTablet::DrawingTablet(): tft(TFT_eSPI()){
   initialize();
+  //starts with the cursor mode
+  setMode(cursor);
 }
-//Needed to set up order between tft declaration and utilization
+//fa partire il driver SPI
 void DrawingTablet::startDriver(){
   tft.init();
+  tft.setRotation(1);
   tft.fillScreen(TFT_WHITE);
 }
-
+//inizializza la matrice di pixel e i valori prev
 void DrawingTablet::initialize(){
   for(int i = 0; i < MAX_X; i++){
     for(int j = 0; j < MAX_Y; j++){
-      pixelMatrix[i][j] = white;
+      pixelMatrix[i][j] = TFT_WHITE;
     }
   }
-  prevColor = white;
+  prevColor = TFT_WHITE;
   prevX = MAX_X/2;
   prevY = MAX_Y/2;
 }
 
-void DrawingTablet::drawPixel(int x, int y, color col){
-  //Salva il valore nella matrice
-  pixelMatrix[x][y] = col;
+void DrawingTablet::drawPixel(int x, int y, uint16_t color){
+  //salva il valore del colore nella matrice
+  pixelMatrix[x][y] = color;
   //Disegna su schermo mappando le coordinate a quelle dello schermo
   for(int i = x*4; i < x*4 + 4; i++){
-    for(int j = y*4; j < y*4 + 4; j++){ 
-      tft.drawPixel(i,j,getColor(col));
-      Serial.printf("Pixel disegnato, i: %d, j: %d\n", i,j);
+    for(int j = y*4; j < y*4 + 4; j++){
+      tft.drawPixel(i,j,color);
     }
   }
 }
+//stampa la matrice corrente
 void DrawingTablet::print(){
-  for(int i=0; i<MAX_X; i++){
-    for(int j=0; j<MAX_Y; j++){
+  tft.fillScreen(TFT_WHITE);
+  for(int i = 0; i < MAX_X; i++){
+    for(int j = 0; j < MAX_Y; j++){
         drawPixel(i,j,pixelMatrix[i][j]);
     }
   }
 }
-
+//muove il cursore senza disegnare
 void DrawingTablet::moveCursor(int x, int y){
-  drawPixel(prevX, prevY, prevColor);
-  prevX = x;
-  prevY = y;
-  prevColor = pixelMatrix[currX][currY];
-  drawPixel(x, y, light_grey);
+  if(x != prevX || y != prevY){
+    //Cambia il colore riportando quello vecchio, solo se il colore corrente è dark_gray,
+    //ovvero solo se il cursore NON sta disegnando
+    if(pixelMatrix[prevX][prevY] == TFT_DARKGREY){
+      drawPixel(prevX, prevY, prevColor);
+    }   
+    prevX = x;
+    prevY = y;
+    prevColor = pixelMatrix[prevX][prevY];
+    drawPixel(x, y, TFT_DARKGREY);
+  }
 }
 
-int DrawingTablet::getColor(color col) {
-  int tft_col;
-  switch (col) {
-    case white:
-      tft_col = TFT_WHITE;
+TFT_eSPI DrawingTablet::get_driver(){
+  return tft;
+}
+
+void DrawingTablet::setMode(tablet_mode new_mode){
+  mode = new_mode;
+}
+void DrawingTablet::setMode(menu_selection new_selection){
+  switch(new_selection){
+    case change_color:
       break;
-    case black:
-      tft_col = TFT_BLACK;
+    case draw:
+      mode = drawing;
       break;
-    case dark_grey:
-      tft_col = TFT_DARKGREY;
-      break;
-    case light_grey:
-      tft_col = TFT_LIGHTGREY;
-      break;
-    case red:
-      tft_col = TFT_RED;
+    case color:
+      mode = coloring;
       break;
   }
-  return tft_col;
+}
+tablet_mode DrawingTablet::getMode(){
+  return mode;
 }
