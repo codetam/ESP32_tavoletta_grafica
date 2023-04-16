@@ -13,6 +13,7 @@ class DrawingTablet{
     int prevY;
     uint16_t prevColor;
     tablet_mode mode;
+    void colorAreaUntil(int x, int y, uint16_t prev_color, uint16_t new_color);
   public:
     DrawingTablet();
     void startDriver();
@@ -24,7 +25,7 @@ class DrawingTablet{
     void setMode(tablet_mode new_mode); //setter per mode
     void setMode(menu_selection new_selection); //cambia mode in base al menu
     tablet_mode getMode();
-    //devo aggiungere il coloring
+    void colorArea(int x, int y, uint16_t new_color);
 };
 
 #endif

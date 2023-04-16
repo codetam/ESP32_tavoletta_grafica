@@ -32,7 +32,6 @@ void loneButtonPressed() {
 void controllerButtonPressed() {
   if (millis() - last_millis_lone_btn > debouncing_time) {
     if (!showMenu) {
-      //se la modalità è cursor o drawing, la si inverte
       switch (tablet->getMode()) {
         case drawing:
           tablet->setMode(cursor);
@@ -40,9 +39,8 @@ void controllerButtonPressed() {
         case cursor:
           tablet->setMode(drawing);
           break;
-        //se la modalità è coloring, il button serve per confermare
         case coloring:
-          //here you must color the area of interest
+          tablet->colorArea(controller->getCursorX(), controller->getCursorY(), TFT_BLACK);
           break;
       }
     }

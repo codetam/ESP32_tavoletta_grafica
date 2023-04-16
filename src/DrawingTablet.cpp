@@ -68,9 +68,11 @@ void DrawingTablet::setMode(tablet_mode new_mode){
 void DrawingTablet::setMode(menu_selection new_selection){
   switch(new_selection){
     case change_color:
+    //TO ADD
+      mode = cursor;
       break;
     case draw:
-      mode = drawing;
+      mode = cursor;
       break;
     case color:
       mode = coloring;
@@ -79,4 +81,34 @@ void DrawingTablet::setMode(menu_selection new_selection){
 }
 tablet_mode DrawingTablet::getMode(){
   return mode;
+}
+
+void DrawingTablet::colorAreaUntil(int x, int y, uint16_t prev_color, uint16_t new_color){
+  // Base cases
+  if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y)
+    return;
+  if (pixelMatrix[x][y] != prev_color)
+    return;
+  if (pixelMatrix[x][y] == new_color)
+    return;
+
+  drawPixel(x, y, new_color);
+  // Recur for north, east, south and west
+  colorAreaUntil(x+1, y, prev_color, new_color);
+  colorAreaUntil(x-1, y, prev_color, new_color);
+  colorAreaUntil(x, y+1, prev_color, new_color);
+  colorAreaUntil(x, y-1, prev_color, new_color);
+}
+
+void DrawingTablet::colorArea(int x, int y, uint16_t new_color){
+  //prevColor è il colore attuale del pixel sul quale si trova il cursore
+  if(prevColor==new_color){
+    return;
+  } 
+  //cambio il valore della matrice a quello precedente alla selezione (non sarà light gray)
+  drawPixel(x, y, prevColor);
+  //chiamo la funzione ricorsiva
+  colorAreaUntil(x, y, prevColor, new_color);
+  //aggiorno prevColor
+  prevColor = new_color;
 }
