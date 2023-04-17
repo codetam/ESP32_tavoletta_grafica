@@ -83,32 +83,32 @@ tablet_mode DrawingTablet::getMode(){
   return mode;
 }
 
-void DrawingTablet::colorAreaUntil(int x, int y, uint16_t prev_color, uint16_t new_color){
-  // Base cases
-  if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y)
-    return;
-  if (pixelMatrix[x][y] != prev_color)
-    return;
-  if (pixelMatrix[x][y] == new_color)
-    return;
-
-  drawPixel(x, y, new_color);
-  // Recur for north, east, south and west
-  colorAreaUntil(x+1, y, prev_color, new_color);
-  colorAreaUntil(x-1, y, prev_color, new_color);
-  colorAreaUntil(x, y+1, prev_color, new_color);
-  colorAreaUntil(x, y-1, prev_color, new_color);
-}
-
 void DrawingTablet::colorArea(int x, int y, uint16_t new_color){
-  //prevColor è il colore attuale del pixel sul quale si trova il cursore
   if(prevColor==new_color){
     return;
   } 
   //cambio il valore della matrice a quello precedente alla selezione (non sarà light gray)
   drawPixel(x, y, prevColor);
-  //chiamo la funzione ricorsiva
-  colorAreaUntil(x, y, prevColor, new_color);
+  //prevColor è il colore attuale del pixel sul quale si trova il cursore
+  std::stack<std::array<int, 2>> stack_int;
+  stack_int.push({x, y});
+  while(stack_int.size() > 0){
+    std::array<int, 2> coords;
+    coords = stack_int.top();
+    stack_int.pop();
+    if(!checkCoordinates(coords.at(0), coords.at(1))) continue;
+    if(pixelMatrix[coords.at(0)][coords.at(1)] != prevColor) continue;
+    if(pixelMatrix[coords.at(0)][coords.at(1)] == new_color) continue;
+    drawPixel(coords.at(0), coords.at(1), new_color);
+    stack_int.push({coords.at(0) + 1, coords.at(1)});
+    stack_int.push({coords.at(0) - 1, coords.at(1)});
+    stack_int.push({coords.at(0), coords.at(1) + 1});
+    stack_int.push({coords.at(0), coords.at(1) - 1});
+  }
   //aggiorno prevColor
   prevColor = new_color;
+}
+
+bool DrawingTablet::checkCoordinates(int x, int y){
+  return(x >= 0 && x < MAX_X && y >= 0 && y < MAX_Y);
 }

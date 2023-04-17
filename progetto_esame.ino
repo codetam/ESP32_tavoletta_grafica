@@ -12,6 +12,7 @@ long debouncing_time = 1000;  //millisecondi
 
 boolean showMenu = false;
 boolean shouldPrintTablet = false;
+boolean shouldColor = false;
 
 //se il button viene premuto, viene aperto/chiuso il menu
 void loneButtonPressed() {
@@ -40,7 +41,7 @@ void controllerButtonPressed() {
           tablet->setMode(drawing);
           break;
         case coloring:
-          tablet->colorArea(controller->getCursorX(), controller->getCursorY(), TFT_BLACK);
+          shouldColor = true;
           break;
       }
     }
@@ -68,7 +69,13 @@ void loop() {
       shouldPrintTablet = false;
     }
     controller->readInput();
-    updateTablet();
+    if(!shouldColor){
+      updateTablet();
+    }
+    else{
+      tablet->colorArea(controller->getCursorX(), controller->getCursorY(), TFT_BLACK);
+      shouldColor = false;
+    }
     delay(50);
   }
   while (showMenu) {

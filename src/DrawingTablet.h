@@ -4,6 +4,8 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include "Constants.h"
+#include <stack>
+#include <array>
 
 class DrawingTablet{
   private:
@@ -13,7 +15,7 @@ class DrawingTablet{
     int prevY;
     uint16_t prevColor;
     tablet_mode mode;
-    void colorAreaUntil(int x, int y, uint16_t prev_color, uint16_t new_color);
+    bool checkCoordinates(int x, int y);
   public:
     DrawingTablet();
     void startDriver();
