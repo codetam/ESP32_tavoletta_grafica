@@ -1,10 +1,12 @@
 #include "src/DrawingTablet.h"
 #include "src/Controller.h"
 #include "src/Menu.h"
+#include "src/ColorWheel.h"
 
 DrawingTablet* tablet;
 Controller* controller;
 Menu* menu;
+ColorWheel* color_wheel;
 
 unsigned long last_millis_controller_btn = 0;
 unsigned long last_millis_lone_btn = 0;
@@ -13,6 +15,7 @@ long debouncing_time = 1000;  //millisecondi
 boolean showMenu = false;
 boolean shouldPrintTablet = false;
 boolean shouldColor = false;
+boolean shouldPrintColorWheel = false;
 
 //se il button viene premuto, viene aperto/chiuso il menu
 void loneButtonPressed() {
@@ -22,6 +25,7 @@ void loneButtonPressed() {
     if (!showMenu) {
       //non posso usare tablet->print() qui perchè l'interrupt deve durare poco
       shouldPrintTablet = true;
+      shouldPrintColorWheel = false;
     } else {
       menu->print();
     }
@@ -32,6 +36,7 @@ void loneButtonPressed() {
 //se il controller viene premuto, viene cambiata modalità o colorata un'area
 void controllerButtonPressed() {
   if (millis() - last_millis_lone_btn > debouncing_time) {
+    //se sono in modalità drawing
     if (!showMenu) {
       switch (tablet->getMode()) {
         case drawing:
@@ -45,6 +50,10 @@ void controllerButtonPressed() {
           break;
       }
     }
+    //Se sono nel menù (click del button prevede il cambio di modalità)
+    else{
+      shouldPrintColorWheel = true;
+    }
     last_millis_lone_btn = millis();
   }
 }
@@ -55,7 +64,7 @@ void setup(void) {
   tablet->startDriver();
 
   menu = new Menu(tablet->get_driver());
-
+  color_wheel = new ColorWheel(tablet->get_driver());
   Serial.begin(115200);
   attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
   attachInterrupt(digitalPinToInterrupt(PIN_LONEBTN), loneButtonPressed, RISING);
@@ -79,16 +88,21 @@ void loop() {
     delay(50);
   }
   while (showMenu) {
-    controller->readInput();
-    menu_selection current_selection = menu->getSelection();
-    menu->switchSelection(controller->getDirection());
-    //se la selezione cambia, si ri-stampa il menù
-    if(menu->getSelection() != current_selection){
-      tablet->setMode(menu->getSelection());
-      menu->print();
-      delay(500);
-    }  
-    delay(50);
+    if(shouldPrintColorWheel){
+      color_wheel->print();
+    }
+    else{
+      controller->readInput();
+      menu_selection current_selection = menu->getSelection();
+      menu->switchSelection(controller->getDirection());
+      //se la selezione cambia, si ri-stampa il menù
+      if(menu->getSelection() != current_selection){
+        tablet->setMode(menu->getSelection());
+        menu->print();
+        delay(500);
+      }  
+      delay(50);
+    } 
   }
 }
 
