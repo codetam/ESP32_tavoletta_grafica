@@ -37,7 +37,6 @@ void DrawingTablet::drawPixel(int x, int y, uint16_t color){
 }
 //stampa la matrice corrente
 void DrawingTablet::print(){
-  tft.fillScreen(TFT_WHITE);
   for(int i = 0; i < MAX_X; i++){
     for(int j = 0; j < MAX_Y; j++){
         drawPixel(i,j,pixelMatrix[i][j]);

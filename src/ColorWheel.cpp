@@ -38,7 +38,7 @@ void ColorWheel::printSelection(){
     draw4pixels(i,30/4, TFT_RED);
     draw4pixels(i,MAX_Y/4, TFT_RED);
   }
-  for(int j=30/4; j<MAX_Y/4; j++){
+  for(int j=30/4; j<MAX_Y/4 + 1; j++){
     draw4pixels(MAX_X * current_selection / 8,j, TFT_RED);
     draw4pixels(MAX_X * (current_selection + 1) / 8,j, TFT_RED);
   }

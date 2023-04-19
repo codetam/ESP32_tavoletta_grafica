@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "Constants.h"
 
-class Controller {
+class Controller{
 private:
   int analogX;
   int analogY;

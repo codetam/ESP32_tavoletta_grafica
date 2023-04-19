@@ -19,7 +19,8 @@ enum direction{
 enum menu_selection{
     change_color,
     draw,
-    color
+    color,
+    change_brush_size
 };
 
 enum tablet_mode{
@@ -27,5 +28,11 @@ enum tablet_mode{
   coloring,
   cursor
 };
+
+enum brush_size{
+  small,
+  medium,
+  large
+}
 
 #endif

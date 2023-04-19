@@ -15,45 +15,39 @@ void Menu::print(){
     tft.setTextColor(TFT_BLACK, TFT_WHITE);
     tft.setFreeFont(FSS9);
 
-    //Middle left
-    tft.setTextDatum(ML_DATUM);
-    tft.drawString("Disegna", 20, 140, GFXFF);
-
-    //Middle Center
-    tft.setTextDatum(MC_DATUM);
-    tft.drawString("Cambia colore", 240, 140, GFXFF);
-
-    //Middle right
-    tft.setTextDatum(MR_DATUM);
-    tft.drawString("Colora", 460, 140, GFXFF);
-
     printSelection();
 }
 
 void Menu::switchSelection(direction current_direction){
   if (current_direction == right){
     switch(current_selection){
-      case change_color:
-        current_selection = color;
-        break;
       case draw:
         current_selection = change_color;
         break;
+      case change_color:
+        current_selection = color;
+        break;
       case color:
+        current_selection = current_selection;
+        break;
+      case change_brush_size:
         current_selection = draw;
         break;
     }
   }
   else if(current_direction == left){
     switch(current_selection){
+      case draw:
+        current_selection = change_brush_size;
+        break;
       case change_color:
         current_selection = draw;
         break;
-      case draw:
-        current_selection = color;
-        break;
       case color:
         current_selection = change_color;
+        break;
+      case change_brush_size:
+        current_selection = color;
         break;
     }
   }
@@ -64,16 +58,34 @@ menu_selection Menu::getSelection(){
 }
 
 void Menu::printSelection(){
-  tft.setTextDatum(C_BASELINE);
-  switch(current_selection){
-    case change_color:
-      tft.drawString("[Cambia Colore]", 240, 300, GFXFF);
-      break;
-    case draw:
-      tft.drawString("[Disegna]", 240, 300, GFXFF);
-      break;
-    case color:
-      tft.drawString("[Colora]", 240, 300, GFXFF);
-      break;
-  }
+  //Middle left
+    tft.setTextDatum(ML_DATUM);
+    if(current_selection == draw)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Disegna", 20, 140, GFXFF);
+
+    //Middle Center
+    tft.setTextDatum(MC_DATUM);
+    if(current_selection == change_color)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Cambia colore", 240, 140, GFXFF);
+
+    //Middle right
+    tft.setTextDatum(MR_DATUM);
+    if(current_selection == color)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Colora", 460, 140, GFXFF);
+
+    tft.setTextDatum(MR_DATUM);
+    if(current_selection == change_brush_size)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Cambia pennello", 460, 140, GFXFF);
 }
