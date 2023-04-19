@@ -2,6 +2,7 @@
 
 //inizializza la costante TFT
 DrawingTablet::DrawingTablet(): tft(TFT_eSPI()){
+  current_color = TFT_BLACK;
   initialize();
   //starts with the cursor mode
   setMode(cursor);

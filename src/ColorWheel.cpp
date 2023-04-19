@@ -10,10 +10,10 @@ ColorWheel::ColorWheel(TFT_eSPI tft_ready): tft(tft_ready){
     available_colors[5] = TFT_RED;
     available_colors[6] = TFT_YELLOW;
     available_colors[7] = TFT_ORANGE;
-    shouldPrint = true;
 }
 
 void ColorWheel::print(){
+  if(shouldPrint){
     tft.fillScreen(TFT_WHITE);
     //header
     tft.setTextSize(1);
@@ -23,42 +23,50 @@ void ColorWheel::print(){
     tft.drawString("Colore", 239, 2, 4);
 
     for(int i=0; i<MAX_X*4; i++){
-        for(int j=31; j<MAX_Y*4/2; j++){   
-            //stampa i primi 4 colori
-            tft.drawPixel(i,j,available_colors[i/MAX_X]);
-        }
-        for(int j=MAX_Y*4/2 + 1; j<MAX_Y*4 - 50; j++){
-            tft.drawPixel(i,j,available_colors[i/MAX_X + 4]);
+        for(int j=30; j<MAX_Y*4/4; j++){   
+            //stampa gli 8 colori in una line
+            tft.drawPixel(i,j,available_colors[i/(MAX_X/2)]);
         }
     }
+    printSelection();
+    shouldPrint = false;
+  } 
 }
 
 void ColorWheel::printSelection(){
-  tft.setTextDatum(C_BASELINE);
-  switch(current_selection){
-    case 0:
-      tft.drawString("[Nero]", 240, 300, GFXFF);
-      break;
-    case 1:
-      tft.drawString("[Bianco]", 240, 300, GFXFF);
-      break;
-    case 2:
-      tft.drawString("[Grigio]", 240, 300, GFXFF);
-      break;
-    case 3:
-      tft.drawString("[Blu]", 240, 300, GFXFF);
-      break;
-    case 4:
-      tft.drawString("[Verde]", 240, 300, GFXFF);
-      break;
-    case 5:
-      tft.drawString("[Rosso]", 240, 300, GFXFF);
-      break;
-    case 6:
-      tft.drawString("[Giallo]", 240, 300, GFXFF);
-      break;
-    case 7:
-      tft.drawString("[Arancio]", 240, 300, GFXFF);
-      break;
+  for(int i=MAX_X * current_selection / 8; i < MAX_X * (current_selection + 1) / 8; i++){
+    draw4pixels(i,30/4, TFT_RED);
+    draw4pixels(i,MAX_Y/4, TFT_RED);
+  }
+  for(int j=30/4; j<MAX_Y/4; j++){
+    draw4pixels(MAX_X * current_selection / 8,j, TFT_RED);
+    draw4pixels(MAX_X * (current_selection + 1) / 8,j, TFT_RED);
+  }
+}
+
+void ColorWheel::switchSelection(direction current_direction){
+  if (current_direction == right){
+    current_selection = (current_selection + 1) % NUM_COLORS;
+  }
+  else if(current_direction == left){
+    if(current_selection == 0){
+      current_selection = 7;
+    }
+    else{
+      current_selection = (current_selection - 1) % NUM_COLORS;
+    }
+  }
+}
+
+void ColorWheel::setShouldPrint(){
+  shouldPrint = true;
+}
+
+void ColorWheel::draw4pixels(int x, int y, uint16_t color){
+  //Disegna su schermo mappando le coordinate a quelle dello schermo
+  for(int i = x*4; i < x*4 + 4; i++){
+    for(int j = y*4; j < y*4 + 4; j++){
+      tft.drawPixel(i,j,color);
+    }
   }
 }

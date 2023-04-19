@@ -5,14 +5,14 @@ Menu::Menu(TFT_eSPI tft_ready): tft(tft_ready){
 }
 
 void Menu::print(){
-    tft.fillScreen(TFT_LIGHTGREY);
+    tft.fillScreen(TFT_WHITE);
     //header
     tft.setTextSize(1);
     tft.setTextColor(TFT_MAGENTA, TFT_BLUE);
     tft.fillRect(0, 0, 480, 30, TFT_BLUE);
     tft.setTextDatum(TC_DATUM);
     tft.drawString("Menu Principale", 239, 2, 4);
-    tft.setTextColor(TFT_BLACK, TFT_LIGHTGREY);
+    tft.setTextColor(TFT_BLACK, TFT_WHITE);
     tft.setFreeFont(FSS9);
 
     //Middle left
