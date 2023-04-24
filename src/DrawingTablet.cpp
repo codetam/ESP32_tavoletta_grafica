@@ -112,3 +112,14 @@ void DrawingTablet::colorArea(int x, int y, uint16_t new_color){
 bool DrawingTablet::checkCoordinates(int x, int y){
   return(x >= 0 && x < MAX_X && y >= 0 && y < MAX_Y);
 }
+
+String DrawingTablet::stringify(){
+  String result = "";
+  for(int i=0; i<MAX_X; i++){
+    for(int j=0; j<MAX_Y; j++){
+      result += pixelMatrix[i][j];
+      result += "_";
+    }
+  }
+  return result;
+}

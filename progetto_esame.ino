@@ -3,12 +3,14 @@
 #include "src/Menu.h"
 #include "src/ColorWheel.h"
 #include "src/Manager.h"
+#include "src/ConnectionHandler.h"
 
 DrawingTablet* tablet;
 Controller* controller;
 Menu* menu;
 ColorWheel* color_wheel;
 Manager* manager;
+ConnectionHandler* connection_handler;
 
 unsigned long last_millis_controller_btn = 0;
 unsigned long last_millis_lone_btn = 0;
@@ -45,13 +47,17 @@ void controllerButtonPressed()
       {
         if(manager->shouldPrintColorWheel())
         {
-          manager->switchToTablet();
+          manager->switchToMenu();
         }
         else
         {
           color_wheel->setShouldPrint();
           manager->switchToColorWheel();
         }  
+      }
+      else if(menu->getSelection() == save_drawing)
+      {
+        manager->switchToSavingMode();
       }
       else
       {
@@ -86,7 +92,11 @@ void setup(void)
 
   menu = new Menu(tablet->get_driver());
   color_wheel = new ColorWheel(tablet->get_driver());
+
   Serial.begin(115200);
+
+  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","http://192.168.1.13/saved_images/index.php",tablet);
+  connection_handler->setup();
 
   attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
   attachInterrupt(digitalPinToInterrupt(PIN_LONEBTN), loneButtonPressed, RISING);
@@ -111,6 +121,12 @@ void loop()
 
       color_wheel->print();                                                   //ri-stampa solo se setShouldPrint() è chiamata
     }
+    else if(manager->shouldSave())
+    {
+      connection_handler->send_to_server("sent_string=" + tablet->stringify());
+      manager->switchToMenu();
+      menu->print();
+    }
     else 
     {
       menu_selection current_selection = menu->getSelection();                //modalità menù
@@ -131,7 +147,7 @@ void loop()
       tablet->print();                                                         //Viene svuotato il menu e viene ricaricato il disegno precedente
       manager->switchToDrawingMode();
     }
-    if (manager->isBucketEnabled())                                                //modalità bucket
+    if (manager->isBucketEnabled())                                            //modalità bucket
     {
       tablet->colorArea(controller->getCursorX(), controller->getCursorY(), tablet->getCurrentColor());
       manager->switchToDrawingMode();

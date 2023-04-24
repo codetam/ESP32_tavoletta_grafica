@@ -28,9 +28,12 @@ void Menu::switchSelection(direction current_direction){
         current_selection = color;
         break;
       case color:
-        current_selection = current_selection;
+        current_selection = change_brush_size;
         break;
       case change_brush_size:
+        current_selection = save_drawing;
+        break;
+      case save_drawing:
         current_selection = draw;
         break;
     }
@@ -38,7 +41,7 @@ void Menu::switchSelection(direction current_direction){
   else if(current_direction == left){
     switch(current_selection){
       case draw:
-        current_selection = change_brush_size;
+        current_selection = save_drawing;
         break;
       case change_color:
         current_selection = draw;
@@ -48,6 +51,9 @@ void Menu::switchSelection(direction current_direction){
         break;
       case change_brush_size:
         current_selection = color;
+        break;
+      case save_drawing:
+        current_selection = change_brush_size;
         break;
     }
   }
@@ -82,10 +88,19 @@ void Menu::printSelection(){
       tft.setTextColor(TFT_BLACK, TFT_WHITE);
     tft.drawString("Colora", 460, 140, GFXFF);
 
-    tft.setTextDatum(MR_DATUM);
+    //Bottom left
+    tft.setTextDatum(BL_DATUM);
     if(current_selection == change_brush_size)
       tft.setTextColor(TFT_BLACK, TFT_YELLOW);
     else 
       tft.setTextColor(TFT_BLACK, TFT_WHITE);
-    tft.drawString("Cambia pennello", 460, 140, GFXFF);
+    tft.drawString("Cambia pennello", 20, 220, GFXFF);
+
+    //Bottom right
+    tft.setTextDatum(BR_DATUM);
+    if(current_selection == save_drawing)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Salva immagine", 460, 220, GFXFF);
 }

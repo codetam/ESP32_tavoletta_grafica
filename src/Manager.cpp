@@ -5,6 +5,7 @@ Manager::Manager(){
     printTablet = false;
     bucketEnabled = false;
     printColorWheel = false;
+    save =  false;
 }
 
 void Manager::switchToTablet(){
@@ -12,6 +13,15 @@ void Manager::switchToTablet(){
     printColorWheel = false;
     printTablet = true;
     bucketEnabled = false;
+    save =  false;
+}
+
+void Manager::switchToMenu(){
+    showMenu = true;
+    printColorWheel = false;
+    printTablet = true;
+    bucketEnabled = false;
+    save =  false;
 }
 
 void Manager::switchToColorWheel(){
@@ -19,6 +29,7 @@ void Manager::switchToColorWheel(){
     printColorWheel = true;
     printTablet = false;
     bucketEnabled = false;
+    save =  false;
 }
 
 void Manager::switchToBucket(){
@@ -26,6 +37,7 @@ void Manager::switchToBucket(){
     printColorWheel = false;
     printTablet = false;
     bucketEnabled = true;
+    save =  false;
 }
 
 void Manager::switchToDrawingMode(){
@@ -33,4 +45,13 @@ void Manager::switchToDrawingMode(){
     printColorWheel = false;
     printTablet = false;
     bucketEnabled = false;
+    save =  false;
+}
+
+void Manager::switchToSavingMode(){
+    showMenu = true;
+    printColorWheel = false;
+    printTablet = false;
+    bucketEnabled = false;
+    save =  true;
 }

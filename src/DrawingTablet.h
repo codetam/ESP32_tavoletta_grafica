@@ -31,6 +31,7 @@ class DrawingTablet{
     void colorArea(int x, int y, uint16_t new_color);
     void setCurrentColor(int16_t color){ current_color = color; }
     uint16_t getCurrentColor() { return current_color; }
+    String stringify();
 };
 
 #endif
