@@ -17,6 +17,7 @@ class DrawingTablet{
     uint16_t current_color;
     tablet_mode mode;
     bool checkCoordinates(int x, int y);
+    char getColorFromMatrix(uint16_t num);
   public:
     DrawingTablet();
     void startDriver();

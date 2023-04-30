@@ -11,6 +11,15 @@
 #define NUM_SELECTIONS 3
 #define NUM_MENU_SELECTIONS 5
 
+#define BLACK 0
+#define WHITE 1
+#define LIGHTGREY 2
+#define BLUE 3
+#define GREEN 4
+#define RED 5
+#define YELLOW 6
+#define ORANGE 7
+
 enum direction{
   left,
   right,

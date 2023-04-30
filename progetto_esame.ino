@@ -95,7 +95,7 @@ void setup(void)
 
   Serial.begin(115200);
 
-  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","http://192.168.1.13/saved_images/index.php",tablet);
+  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","http://iot.dayngine.com",tablet);
   connection_handler->setup();
 
   attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);

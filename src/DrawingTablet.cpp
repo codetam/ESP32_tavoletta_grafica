@@ -117,9 +117,39 @@ String DrawingTablet::stringify(){
   String result = "";
   for(int i=0; i<MAX_X; i++){
     for(int j=0; j<MAX_Y; j++){
-      result += pixelMatrix[i][j];
-      result += "_";
+      result += getColorFromMatrix(pixelMatrix[i][j]);
     }
   }
   return result;
+}
+
+char DrawingTablet::getColorFromMatrix(uint16_t num){
+  char c;
+  switch(num){
+    case TFT_BLACK:
+      c = '0';
+      break;
+    case TFT_WHITE:
+      c = '1';
+      break;
+    case TFT_LIGHTGREY:
+      c = 'L';
+      break;
+    case TFT_BLUE:
+      c = 'B';
+      break;
+    case TFT_GREEN:
+      c = 'G';
+      break;
+    case TFT_RED:
+      c = 'R';
+      break;
+    case TFT_YELLOW:
+      c = 'Y';
+      break;
+    case TFT_ORANGE:
+      c = 'O';
+      break;
+  }
+  return c;
 }
