@@ -3,6 +3,7 @@
 
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include "ESPAsyncWebServer.h"
 #include "DrawingTablet.h"
 
 class ConnectionHandler{
@@ -15,6 +16,7 @@ class ConnectionHandler{
         ConnectionHandler(char* ssid, char* password, char* serverName, DrawingTablet* tablet);
         void setup();
         void send_to_server(String postData);
+        void createWebServer();
 };
 
 #endif

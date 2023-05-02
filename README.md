@@ -28,3 +28,13 @@ exit status 1
 
 Compilation error: use of deleted function 'TFT_eSPI& TFT_eSPI::operator=(TFT_eSPI&&)'
 ```
+
+## Sources
+
+https://doc4dev.com/en/create-a-web-site-php-apache-mysql-in-5-minutes-with-docker/
+
+https://techtutorialsx.com/2018/10/12/esp32-http-web-server-handling-body-data/
+
+## Libraries:
+
+https://github.com/me-no-dev/ESPAsyncWebServer

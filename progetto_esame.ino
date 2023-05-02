@@ -1,3 +1,4 @@
+/*
 #include "src/DrawingTablet.h"
 #include "src/Controller.h"
 #include "src/Menu.h"
@@ -95,7 +96,7 @@ void setup(void)
 
   Serial.begin(115200);
 
-  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","http://iot.dayngine.com",tablet);
+  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","192.168.1.11",tablet);
   connection_handler->setup();
 
   attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
@@ -175,3 +176,22 @@ void updateTablet()
       break;
   }
 }
+*/
+
+#include "src/DrawingTablet.h"
+#include "src/ConnectionHandler.h"
+
+ConnectionHandler* connection_handler;
+
+void setup(void)
+{
+  DrawingTablet* tablet;
+  Serial.begin(115200);
+  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","192.168.1.11",tablet);
+  connection_handler->setup();
+  connection_handler->createWebServer();
+}
+
+void loop(){}
+
+
