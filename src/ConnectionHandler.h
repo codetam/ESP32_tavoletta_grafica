@@ -8,14 +8,16 @@
 
 class ConnectionHandler{
     private:
+        bool isLoggedIn;
         const char* ssid;
         const char* password;
-        const char* serverName;
+        String dBusername;
+        String dBpassword;
         DrawingTablet* tablet;
     public:
-        ConnectionHandler(char* ssid, char* password, char* serverName, DrawingTablet* tablet);
+        ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet);
         void setup();
-        void send_to_server(String postData);
+        int send_to_server(String serverName, int port, String subfolder, String postData);
         void createWebServer();
 };
 

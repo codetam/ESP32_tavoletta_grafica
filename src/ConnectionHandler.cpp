@@ -4,7 +4,11 @@
 AsyncWebServer server(80);
 const char* INDEX_HTML = "<html><body><form action='/login' method='post'><input type='text' name='uid' placeholder='Username'><input type='password' name='pwd' placeholder='Password'><br><button type='submit' name='submit'>LOGIN</button></form></body></html>";
 
-ConnectionHandler::ConnectionHandler(char *ssid, char *password, char *serverName, DrawingTablet *tablet) : ssid(ssid), password(password), serverName(serverName), tablet(tablet) {}
+ConnectionHandler::ConnectionHandler(char *ssid, char *password, DrawingTablet *tablet) : ssid(ssid), password(password), tablet(tablet) {
+  isLoggedIn = false;
+  dBusername = "";
+  dBpassword = "";
+}
 
 void ConnectionHandler::setup()
 {
@@ -19,22 +23,22 @@ void ConnectionHandler::setup()
   Serial.println(WiFi.localIP());
 }
 
-void ConnectionHandler::send_to_server(String postData)
+int ConnectionHandler::send_to_server(String serverName, int port, String subfolder, String postData)
 {
-  HTTPClient http; // Declare object of class HTTPClient
+  HTTPClient http;
   if (WiFi.status() == WL_CONNECTED)
-  { // Check WiFi connection status
-    // Send and get Data
-    http.begin(serverName, 80);                                        // Specify request destination
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Specify content-type header
-    int httpCode = http.POST(postData);                                  // Send the request
-    Serial.println(httpCode);                                            // Print HTTP return code
-    http.end();                                                          // Close connection
-    Serial.println("Immagine salvata con successo.");
+  {
+    http.begin(serverName, 8056, subfolder);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    int httpCode = http.POST(postData);
+    Serial.println(httpCode);
+    http.end();
+    return httpCode;
   }
   else
   {
     Serial.println("Error in WiFi connection");
+    return -1;
   }
 }
 
@@ -49,21 +53,32 @@ void ConnectionHandler::createWebServer()
     });
 
     // Send a POST request to <IP>/post with a form field message set to <message>
-    server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request){
-        String message;
-        message = "Username: ";
+    server.on("/login", HTTP_POST, [this](AsyncWebServerRequest *request){
+        String uid = "";
+        String pwd = "";
         if (request->hasParam("uid", true)) {
-            message += request->getParam("uid", true)->value();
-        } else {
-            message += "No username sent ";
+            uid = request->getParam("uid", true)->value();
         }
-        message += " Password: ";
         if (request->hasParam("pwd", true)) {
-            message += request->getParam("pwd", true)->value();
-        } else {
-            message += "No password sent";
+            pwd = request->getParam("pwd", true)->value();
         }
-        request->send(200, "text/plain", "Hello, POST: " + message);
+        if(uid != "" && pwd != ""){ //L'utente ha inserito le credenziali
+          int status = this->send_to_server("iot.dayngine.com", 8056, "/esp_login/index.php", "uid=" + uid + "&pwd=" + pwd);
+          if(status == 200){
+            request->send(200, "text/plain", "Loggato con successo!");
+            this->dBusername = uid;
+            this->dBpassword = pwd;
+            this->isLoggedIn = true;
+            Serial.println("Username: " + this->dBusername);
+            Serial.println("Password: " + this->dBpassword);
+          }
+          else{
+            request->send(200, "text/plain", "Credenziali errate!");
+          }
+        }
+        else{
+          request->send(200, "text/plain", "Mancano delle credenziali!");
+        }
     }); 
     server.onNotFound(notFound);
     server.begin();
