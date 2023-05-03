@@ -187,7 +187,8 @@ void setup(void)
 {
   DrawingTablet* tablet;
   Serial.begin(115200);
-  connection_handler = new ConnectionHandler("TP-Link_093A","85345010","192.168.1.11",tablet);
+  //connection_handler = new ConnectionHandler("TP-Link_093A","85345010","192.168.1.11",tablet);
+  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau","192.168.1.11",tablet);
   connection_handler->setup();
   connection_handler->createWebServer();
 }

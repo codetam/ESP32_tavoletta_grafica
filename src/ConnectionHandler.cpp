@@ -1,5 +1,9 @@
 #include "ConnectionHandler.h"
 
+
+AsyncWebServer server(80);
+const char* INDEX_HTML = "<html><body><form action='/login' method='post'><input type='text' name='uid' placeholder='Username'><input type='password' name='pwd' placeholder='Password'><br><button type='submit' name='submit'>LOGIN</button></form></body></html>";
+
 ConnectionHandler::ConnectionHandler(char *ssid, char *password, char *serverName, DrawingTablet *tablet) : ssid(ssid), password(password), serverName(serverName), tablet(tablet) {}
 
 void ConnectionHandler::setup()
@@ -34,20 +38,33 @@ void ConnectionHandler::send_to_server(String postData)
   }
 }
 
+void notFound(AsyncWebServerRequest *request) {
+    request->send(404, "text/plain", "Not found");
+}
+
 void ConnectionHandler::createWebServer()
 {
-  AsyncWebServer server(8080);
-  server.on("/post", HTTP_POST, [](AsyncWebServerRequest * request){
-    if(request->hasArg("number")){
-        String arg = request->arg("number");
-        Serial.print("The number is: ");
-        Serial.println(arg);
-    } else {
-        Serial.println("Post did not have a 'number' field.");
-    }
-    request->send(200);
- });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "text/html", INDEX_HTML);
+    });
 
-  server.begin();
-  Serial.println("Server has begun.");
+    // Send a POST request to <IP>/post with a form field message set to <message>
+    server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request){
+        String message;
+        message = "Username: ";
+        if (request->hasParam("uid", true)) {
+            message += request->getParam("uid", true)->value();
+        } else {
+            message += "No username sent ";
+        }
+        message += " Password: ";
+        if (request->hasParam("pwd", true)) {
+            message += request->getParam("pwd", true)->value();
+        } else {
+            message += "No password sent";
+        }
+        request->send(200, "text/plain", "Hello, POST: " + message);
+    }); 
+    server.onNotFound(notFound);
+    server.begin();
 }
