@@ -17,8 +17,9 @@ class ConnectionHandler{
     public:
         ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet);
         void setup();
-        int send_to_server(String serverName, int port, String subfolder, String postData);
+        int post_to_server(String serverName, int port, String subfolder, String postData);
         void createWebServer();
+        void upload();
 };
 
 #endif

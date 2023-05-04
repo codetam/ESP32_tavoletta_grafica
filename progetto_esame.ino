@@ -95,8 +95,8 @@ void setup(void)
 
   Serial.begin(115200);
 
-  //connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
-  connection_handler = new ConnectionHandler("TP-Link_093A","85345010",tablet);
+  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
+  //connection_handler = new ConnectionHandler("TP-Link_093A","85345010",tablet);
   connection_handler->setup();
   connection_handler->createWebServer();
 
@@ -125,8 +125,7 @@ void loop()
     }
     else if(manager->shouldSave())
     {
-      connection_handler->send_to_server("iot.dayngine.com", 8056, "/index.php", "sent_string=" + tablet->stringify());
-      connection_handler->send_to_server("iot.dayngine.com", 8056, "/esp_login/index.php", "uid=amogus&pwd=sus");
+      connection_handler->upload();
       manager->switchToMenu();
       menu->print();
     }
