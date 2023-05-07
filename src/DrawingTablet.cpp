@@ -2,39 +2,47 @@
 
 //inizializza la costante TFT
 DrawingTablet::DrawingTablet(): tft(TFT_eSPI()){
-  current_color = TFT_BLACK;
+  current_color = '0';
   initialize();
   //starts with the cursor mode
   setMode(cursor);
 }
+
 //fa partire il driver SPI
 void DrawingTablet::startDriver(){
   tft.init();
   tft.setRotation(1);
   tft.fillScreen(TFT_WHITE);
 }
+
+//ritorna il driver TFT_eSPI
+TFT_eSPI DrawingTablet::get_driver(){
+  return tft;
+}
+
 //inizializza la matrice di pixel e i valori prev
 void DrawingTablet::initialize(){
   for(int i = 0; i < MAX_X; i++){
     for(int j = 0; j < MAX_Y; j++){
-      pixelMatrix[i][j] = TFT_WHITE;
+      pixelMatrix[i][j] = '1';
     }
   }
-  prevColor = TFT_WHITE;
+  prevColor = '1';
   prevX = MAX_X/2;
   prevY = MAX_Y/2;
 }
 
-void DrawingTablet::drawPixel(int x, int y, uint16_t color){
+void DrawingTablet::drawPixel(int x, int y, char color){
   //salva il valore del colore nella matrice
   pixelMatrix[x][y] = color;
-  //Disegna su schermo mappando le coordinate a quelle dello schermo
+  //Disegna su schermo mappando le coordinate della matrice a quelle dello schermo
   for(int i = x*4; i < x*4 + 4; i++){
     for(int j = y*4; j < y*4 + 4; j++){
-      tft.drawPixel(i,j,color);
+      tft.drawPixel(i,j,getColorFromChar(color));
     }
   }
 }
+
 //stampa la matrice corrente
 void DrawingTablet::print(){
   for(int i = 0; i < MAX_X; i++){
@@ -43,23 +51,20 @@ void DrawingTablet::print(){
     }
   }
 }
+
 //muove il cursore senza disegnare
 void DrawingTablet::moveCursor(int x, int y){
   if(x != prevX || y != prevY){
     //Cambia il colore riportando quello vecchio, solo se il colore corrente è dark_gray,
     //ovvero solo se il cursore NON sta disegnando
-    if(pixelMatrix[prevX][prevY] == TFT_DARKGREY){
+    if(pixelMatrix[prevX][prevY] == 'D'){
       drawPixel(prevX, prevY, prevColor);
     }   
     prevX = x;
     prevY = y;
     prevColor = pixelMatrix[prevX][prevY];
-    drawPixel(x, y, TFT_DARKGREY);
+    drawPixel(x, y, 'D');
   }
-}
-
-TFT_eSPI DrawingTablet::get_driver(){
-  return tft;
 }
 
 void DrawingTablet::setMode(tablet_mode new_mode){
@@ -68,7 +73,6 @@ void DrawingTablet::setMode(tablet_mode new_mode){
 void DrawingTablet::setMode(menu_selection new_selection){
   switch(new_selection){
     case change_color:
-    //TO ADD
       mode = cursor;
       break;
     case draw:
@@ -79,17 +83,19 @@ void DrawingTablet::setMode(menu_selection new_selection){
       break;
   }
 }
+
 tablet_mode DrawingTablet::getMode(){
   return mode;
 }
 
-void DrawingTablet::colorArea(int x, int y, uint16_t new_color){
+void DrawingTablet::colorArea(int x, int y, char new_color){
   if(prevColor==new_color){
     return;
   } 
-  //cambio il valore della matrice a quello precedente alla selezione (non sarà light gray)
+  // cambio il valore della matrice a quello precedente al pixel selezionato
+  // se non lo facessi, avrei il dark_gray dato dal cursore
+  // prevColor è il colore attuale del pixel sul quale si trova il cursore
   drawPixel(x, y, prevColor);
-  //prevColor è il colore attuale del pixel sul quale si trova il cursore
   std::stack<std::array<int, 2>> stack_int;
   stack_int.push({x, y});
   while(stack_int.size() > 0){
@@ -117,39 +123,8 @@ String DrawingTablet::stringify(){
   String result = "";
   for(int i=0; i<MAX_X; i++){
     for(int j=0; j<MAX_Y; j++){
-      result += getColorFromMatrix(pixelMatrix[i][j]);
+      result += pixelMatrix[i][j];
     }
   }
   return result;
-}
-
-char DrawingTablet::getColorFromMatrix(uint16_t num){
-  char c;
-  switch(num){
-    case TFT_BLACK:
-      c = '0';
-      break;
-    case TFT_WHITE:
-      c = '1';
-      break;
-    case TFT_LIGHTGREY:
-      c = 'L';
-      break;
-    case TFT_BLUE:
-      c = 'B';
-      break;
-    case TFT_GREEN:
-      c = 'G';
-      break;
-    case TFT_RED:
-      c = 'R';
-      break;
-    case TFT_YELLOW:
-      c = 'Y';
-      break;
-    case TFT_ORANGE:
-      c = 'O';
-      break;
-  }
-  return c;
 }

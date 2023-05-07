@@ -10,18 +10,21 @@ class Manager{
         bool save;
     public:
         Manager();
-        void switchToTablet();
-        void switchToDrawingMode();
-        void switchToColorWheel();
-        void switchToBucket();
-        void switchToSavingMode();
-        void switchToMenu();
+        void switchToMenu();            // Modalità menu
+        void switchToColorWheel();      // Modalità menu
+        void switchToSavingMode();      // Modalità menu
+        void switchToTablet();          // Modalità tablet
+        void switchToCursor();          // Modalità tablet
+        void switchToBucket();          // Modalità tablet
+
+        void toggleMenu(){ showMenu = !showMenu; }
+
         bool shouldShowMenu(){ return showMenu; }
         bool shouldPrintTablet(){ return printTablet; }
-        bool isBucketEnabled(){ return bucketEnabled; }
+
         bool shouldPrintColorWheel(){ return printColorWheel; }
         bool shouldSave(){ return save; }
-        void toggleMenu(){ showMenu = !showMenu; }
+        bool isBucketEnabled(){ return bucketEnabled; }
 };
 
 #endif

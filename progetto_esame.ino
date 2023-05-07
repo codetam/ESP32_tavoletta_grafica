@@ -17,9 +17,9 @@ unsigned long last_millis_lone_btn = 0;
 long debouncing_time = 1000;  //millisecondi
 
 
-void loneButtonPressed()                                                                        //se il button viene premuto, viene aperto/chiuso il menu
+void loneButtonPressed()                                            // Se il button viene premuto, viene aperto/chiuso il menu
 {
-  if (millis() - last_millis_controller_btn > debouncing_time)                                  //verifica il debouncing
+  if (millis() - last_millis_controller_btn > debouncing_time)      // Verifica il debouncing
   {
     manager->toggleMenu();
      
@@ -29,30 +29,29 @@ void loneButtonPressed()                                                        
     }
     else
     {
-      manager->switchToTablet();
-    }
-
+      manager->switchToTablet();                                    // Non posso direttamente stampare la matrice perchè
+    }                                                               // la callback prevede un tempo di esecuzione piccolo
     last_millis_controller_btn = millis();
   }
 }
 
-//se il controller viene premuto, viene cambiata modalità o colorata un'area
-void controllerButtonPressed()
+void controllerButtonPressed()                                      // Se il controller viene premuto
 {
-  if (millis() - last_millis_lone_btn > debouncing_time)                                          //verifica il debouncing
+  if (millis() - last_millis_lone_btn > debouncing_time)            // Verifica il debouncing
   {
-    if(manager->shouldShowMenu())
-    {
-      if (menu->getSelection() == change_color)
+    if(manager->shouldShowMenu())                                   // Può selezionare un nuovo colore, salvare 
+    {                                                               // l'immagine o cambiare a modalità tablet
+      if (menu->getSelection() == change_color)                     
       {
-        if(manager->shouldPrintColorWheel())
+        if(manager->shouldPrintColorWheel())                        // se mostra la color wheel
         {
-          manager->switchToMenu();
+          manager->switchToMenu();                                  // passa a modalità menu  
+          menu->print();                                            // stampa il menu
         }
-        else
+        else                                                        // se è in modalità menu
         {
-          color_wheel->setShouldPrint();
-          manager->switchToColorWheel();
+          color_wheel->setShouldPrint();                            // stampa la color wheel                
+          manager->switchToColorWheel();                            // passa in modalità color wheel
         }  
       }
       else if(menu->getSelection() == save_drawing)
@@ -64,8 +63,8 @@ void controllerButtonPressed()
         manager->switchToTablet();
       }
     }
-    else
-    {
+    else                                                            // Può passare da cursore a pennello
+    {                                                               // oppure colorare un'area
       switch (tablet->getMode())
       {
         case drawing:
@@ -96,7 +95,6 @@ void setup(void)
   Serial.begin(115200);
 
   connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
-  //connection_handler = new ConnectionHandler("TP-Link_093A","85345010",tablet);
   connection_handler->setup();
   connection_handler->createWebServer();
 
@@ -106,53 +104,54 @@ void setup(void)
 
 void loop()
 {
-  controller->readInput();                                                    //Aggiorna le variabili dell'oggetto controller
+  controller->readInput();                                                    // Aggiorna le variabili dell'oggetto controller
   
   if (manager->shouldShowMenu())
   {
-    if (manager->shouldPrintColorWheel())                                     //modalità color wheel
+    if (manager->shouldPrintColorWheel())                                     // Modalità color wheel
     {
-      uint16_t current_color = color_wheel->getColor();
+      char current_color = color_wheel->getColor();
       color_wheel->switchSelection(controller->getDirection());
 
-      if (color_wheel->getColor() != current_color)                           //Il colore è stato cambiato
+      if (color_wheel->getColor() != current_color)                           // Il colore è stato cambiato
       {
         tablet->setCurrentColor(color_wheel->getColor());                     
         color_wheel->setShouldPrint();
       }
 
-      color_wheel->print();                                                   //ri-stampa solo se setShouldPrint() è chiamata
+      color_wheel->print();                                                   // Ri-stampa solo se setShouldPrint() è chiamata
     }
     else if(manager->shouldSave())
     {
-      connection_handler->upload();
-      manager->switchToMenu();
+      connection_handler->upload();                                           // Viene caricata l'immagine sul database
+      manager->switchToMenu();                                                // Viene stampato il menu
       menu->print();
     }
     else 
     {
-      menu_selection current_selection = menu->getSelection();                //modalità menù
+      menu_selection current_selection = menu->getSelection();                // Modalità menù
       menu->switchSelection(controller->getDirection());
 
       if (menu->getSelection() != current_selection) 
       {
-        tablet->setMode(menu->getSelection());
-        menu->printSelection();                                                         //ri-stampa solo se la selezione è cambiata
+        tablet->setMode(menu->getSelection());                                // Aggiorna la modalità della tavoletta 
+        menu->printSelection();                                               // Ri-stampa solo se la selezione è cambiata
       }
     }
     delay(100);
   }
-  else                                                                         //modalità tablet
+  else                                                                        // Modalità tablet
   {
-    if (manager->shouldPrintTablet())                                          //appena switchato a modalità tablet
+    if (manager->shouldPrintTablet())                                         // Appena switchato a modalità tablet
     {
-      tablet->print();                                                         //Viene svuotato il menu e viene ricaricato il disegno precedente
-      manager->switchToDrawingMode();
+      tablet->print();                                                        // Viene svuotato il menu e ricaricato il disegno precedente
+      manager->switchToCursor();
     }
-    if (manager->isBucketEnabled())                                            //modalità bucket
+
+    if (manager->isBucketEnabled())                                           //modalità bucket
     {
       tablet->colorArea(controller->getCursorX(), controller->getCursorY(), tablet->getCurrentColor());
-      manager->switchToDrawingMode();
+      manager->switchToCursor();
     }
     else
     {
@@ -167,14 +166,13 @@ void updateTablet()
   switch (tablet->getMode())
   {
     case drawing:
-      tablet->drawPixel(controller->getCursorX(), controller->getCursorY(), tablet->getCurrentColor());
+      tablet->drawPixel(controller->getCursorX(), controller->getCursorY(), tablet->getCurrentColor()); // Disegna
       break;
     case cursor:
-      tablet->moveCursor(controller->getCursorX(), controller->getCursorY());
+      tablet->moveCursor(controller->getCursorX(), controller->getCursorY());                           // Muove il cursore
       break;
     case coloring:
-      tablet->moveCursor(controller->getCursorX(), controller->getCursorY());
+      tablet->moveCursor(controller->getCursorX(), controller->getCursorY());                           // Muove il cursore
       break;
   }
 }
-

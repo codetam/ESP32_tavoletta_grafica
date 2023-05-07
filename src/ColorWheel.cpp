@@ -2,16 +2,17 @@
 
 ColorWheel::ColorWheel(TFT_eSPI tft_ready): tft(tft_ready){
     current_selection = 0;
-    available_colors[0] = TFT_BLACK;
-    available_colors[1] = TFT_WHITE;
-    available_colors[2] = TFT_LIGHTGREY;
-    available_colors[3] = TFT_BLUE;
-    available_colors[4] = TFT_GREEN;
-    available_colors[5] = TFT_RED;
-    available_colors[6] = TFT_YELLOW;
-    available_colors[7] = TFT_ORANGE;
+    available_colors[0] = '0';
+    available_colors[1] = '1';
+    available_colors[2] = 'L';
+    available_colors[3] = 'B';
+    available_colors[4] = 'G';
+    available_colors[5] = 'R';
+    available_colors[6] = 'Y';
+    available_colors[7] = 'O';
 }
 
+// Stampa la color wheel
 void ColorWheel::print(){
   if(shouldPrint){
     tft.fillScreen(TFT_WHITE);
@@ -25,7 +26,7 @@ void ColorWheel::print(){
     for(int i=0; i<MAX_X*4; i++){
         for(int j=30; j<MAX_Y*4/4; j++){   
             //stampa gli 8 colori in una line
-            tft.drawPixel(i,j,available_colors[i/(MAX_X/2)]);
+            tft.drawPixel(i,j,getColorFromChar(available_colors[i/(MAX_X/2)]));
         }
     }
     printSelection();
@@ -33,17 +34,19 @@ void ColorWheel::print(){
   } 
 }
 
+// Stampa il riquadro rosso intorno al colore selezionato
 void ColorWheel::printSelection(){
-  for(int i=MAX_X * current_selection / 8; i < MAX_X * (current_selection + 1) / 8; i++){
-    draw4pixels(i,30/4, TFT_RED);
-    draw4pixels(i,MAX_Y/4, TFT_RED);
+  for(int i = MAX_X * current_selection / 8; i < MAX_X * (current_selection + 1) / 8; i++){
+    draw16pixels(i,30/4, TFT_RED);
+    draw16pixels(i,MAX_Y/4, TFT_RED);
   }
   for(int j=30/4; j<MAX_Y/4 + 1; j++){
-    draw4pixels(MAX_X * current_selection / 8,j, TFT_RED);
-    draw4pixels(MAX_X * (current_selection + 1) / 8,j, TFT_RED);
+    draw16pixels(MAX_X * current_selection / 8,j, TFT_RED);
+    draw16pixels(MAX_X * (current_selection + 1) / 8,j, TFT_RED);
   }
 }
 
+// Cambia selezione in base a quella precedente (andando a destra o a sinistra)
 void ColorWheel::switchSelection(direction current_direction){
   if (current_direction == right){
     current_selection = (current_selection + 1) % NUM_COLORS;
@@ -58,11 +61,13 @@ void ColorWheel::switchSelection(direction current_direction){
   }
 }
 
+// Viene chiamata quando la color wheel va stampata
 void ColorWheel::setShouldPrint(){
   shouldPrint = true;
 }
 
-void ColorWheel::draw4pixels(int x, int y, uint16_t color){
+// Funzione che aiuta con la stampa
+void ColorWheel::draw16pixels(int x, int y, uint16_t color){
   //Disegna su schermo mappando le coordinate a quelle dello schermo
   for(int i = x*4; i < x*4 + 4; i++){
     for(int j = y*4; j < y*4 + 4; j++){

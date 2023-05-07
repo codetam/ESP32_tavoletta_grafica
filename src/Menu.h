@@ -1,9 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "TFT_eSPI.h"
-#include <SPI.h>
-#include "Free_Fonts.h" // Include the header file attached to this sketch
 #include "Constants.h"
 
 class Menu{

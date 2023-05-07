@@ -1,6 +1,10 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include "TFT_eSPI.h"
+#include <SPI.h>
+#include "Free_Fonts.h"
+
 #define MAX_X 120  //480
 #define MAX_Y 80   //320
 
@@ -45,5 +49,7 @@ enum brush_size{
   medium,
   large
 };
+
+uint16_t getColorFromChar(char num);
 
 #endif
