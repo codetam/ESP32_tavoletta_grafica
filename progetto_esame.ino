@@ -4,6 +4,9 @@
 #include "src/ColorWheel.h"
 #include "src/Manager.h"
 #include "src/ConnectionHandler.h"
+#include "src/LCDDisplay.h"
+
+TaskHandle_t runDisplay;
 
 DrawingTablet* tablet;
 Controller* controller;
@@ -11,11 +14,28 @@ Menu* menu;
 ColorWheel* color_wheel;
 Manager* manager;
 ConnectionHandler* connection_handler;
+LCDDisplay* display;
 
 unsigned long last_millis_controller_btn = 0;
 unsigned long last_millis_lone_btn = 0;
 long debouncing_time = 1000;  //millisecondi
 
+void run_display(void* ptr){
+  char curr_color;
+  lcd_state curr_state;
+  char prev_color = '0';
+  lcd_state prev_state = display->getState();
+  display->print();
+  while(true){
+    curr_color = display->getColor();
+    curr_state = display->getState();
+    if(prev_state != curr_state || prev_color != curr_color){
+      prev_color = curr_color;
+      prev_state = curr_state;
+      display->print();
+    }
+  }
+}
 
 void loneButtonPressed()                                            // Se il button viene premuto, viene aperto/chiuso il menu
 {
@@ -84,19 +104,34 @@ void controllerButtonPressed()                                      // Se il con
 
 void setup(void)
 {
+  display = new LCDDisplay();
+  display->init();
+  xTaskCreatePinnedToCore(
+      run_display, /* Function to implement the task */
+      "runDisplay", /* Name of the task */
+      10000,  /* Stack size in words */
+      NULL,  /* Task input parameter */
+      0,  /* Priority of the task */
+      &runDisplay,  /* Task handle. */
+      1); /* Core where the task should run */
+  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
   manager = new Manager();
   controller = new Controller();
   tablet = new DrawingTablet();
   tablet->startDriver();
 
-  menu = new Menu(tablet->get_driver());
-  color_wheel = new ColorWheel(tablet->get_driver());
 
   Serial.begin(115200);
 
-  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
+  display->setState(lcd_connecting);
   connection_handler->setup();
+  display->setIP(connection_handler->getIP());
+  display->setState(lcd_drawing);
   connection_handler->createWebServer();
+
+  
+  menu = new Menu(tablet->get_driver(), connection_handler);
+  color_wheel = new ColorWheel(tablet->get_driver());
 
   attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
   attachInterrupt(digitalPinToInterrupt(PIN_LONEBTN), loneButtonPressed, RISING);
@@ -115,7 +150,8 @@ void loop()
 
       if (color_wheel->getColor() != current_color)                           // Il colore è stato cambiato
       {
-        tablet->setCurrentColor(color_wheel->getColor());                     
+        tablet->setCurrentColor(color_wheel->getColor()); 
+        display->setColor(color_wheel->getColor());                    
         color_wheel->setShouldPrint();
       }
 
@@ -123,7 +159,9 @@ void loop()
     }
     else if(manager->shouldSave())
     {
+      display->setState(lcd_loading);
       connection_handler->upload();                                           // Viene caricata l'immagine sul database
+      display->setState(lcd_drawing);                                       
       manager->switchToMenu();                                                // Viene stampato il menu
       menu->print();
     }
@@ -144,6 +182,12 @@ void loop()
   {
     if (manager->shouldPrintTablet())                                         // Appena switchato a modalità tablet
     {
+      if(tablet->getMode() == cursor){
+        display->setState(lcd_drawing);
+      }
+      else if(tablet->getMode() == coloring){
+        display->setState(lcd_coloring);
+      }
       tablet->print();                                                        // Viene svuotato il menu e ricaricato il disegno precedente
       manager->switchToCursor();
     }

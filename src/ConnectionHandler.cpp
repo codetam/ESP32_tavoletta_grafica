@@ -28,6 +28,7 @@ void ConnectionHandler::setup()
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
+  current_ip = WiFi.localIP().toString();
 }
 
 int ConnectionHandler::post_to_server(String serverName, int port, String subfolder, String postData)
@@ -133,4 +134,8 @@ void ConnectionHandler::upload()
   {
     Serial.println("Errore durante il salvataggio dell'immagine.");
   }
+}
+
+String ConnectionHandler::getIP(){
+  return current_ip;
 }

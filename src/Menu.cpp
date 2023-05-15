@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(TFT_eSPI tft_ready): tft(tft_ready){
+Menu::Menu(TFT_eSPI tft_ready, ConnectionHandler* conn): tft(tft_ready), conn(conn){
   current_selection = draw;
 }
 
@@ -8,13 +8,13 @@ void Menu::print(){
     tft.fillScreen(TFT_WHITE);
     //header
     tft.setTextSize(1);
-    tft.setTextColor(TFT_MAGENTA, TFT_BLUE);
-    tft.fillRect(0, 0, 480, 30, TFT_BLUE);
+    tft.setTextColor(TFT_BLUE, TFT_LIGHTGREY);
+    tft.fillRect(0, 0, 480, 30, TFT_LIGHTGREY);
     tft.setTextDatum(TC_DATUM);
-    tft.drawString("Menu Principale", 239, 2, 4);
+    tft.drawString("Menu Principale", 240, 2, 4);
     tft.setTextColor(TFT_BLACK, TFT_WHITE);
     tft.setFreeFont(FSS9);
-
+    printIP();
     printSelection();
 }
 
@@ -28,9 +28,12 @@ void Menu::switchSelection(direction current_direction){
         current_selection = color;
         break;
       case color:
-        current_selection = change_brush_size;
+        current_selection = reset;
         break;
-      case change_brush_size:
+      case reset:
+        current_selection = load_drawing;
+        break;
+      case load_drawing:
         current_selection = save_drawing;
         break;
       case save_drawing:
@@ -49,11 +52,14 @@ void Menu::switchSelection(direction current_direction){
       case color:
         current_selection = change_color;
         break;
-      case change_brush_size:
+      case reset:
         current_selection = color;
         break;
+      case load_drawing:
+        current_selection = reset;
+        break;
       case save_drawing:
-        current_selection = change_brush_size;
+        current_selection = load_drawing;
         break;
     }
   }
@@ -61,6 +67,12 @@ void Menu::switchSelection(direction current_direction){
 
 menu_selection Menu::getSelection(){
   return current_selection;
+}
+
+void Menu::printIP(){
+    tft.setTextDatum(TC_DATUM);
+    tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("IP corrente: " + conn->getIP(), 240, 70, GFXFF);
 }
 
 void Menu::printSelection(){
@@ -90,11 +102,19 @@ void Menu::printSelection(){
 
     //Bottom left
     tft.setTextDatum(BL_DATUM);
-    if(current_selection == change_brush_size)
+    if(current_selection == reset)
       tft.setTextColor(TFT_BLACK, TFT_YELLOW);
     else 
       tft.setTextColor(TFT_BLACK, TFT_WHITE);
-    tft.drawString("Cambia pennello", 20, 220, GFXFF);
+    tft.drawString("Reset", 20, 220, GFXFF);
+
+    //Bottom center
+    tft.setTextDatum(BC_DATUM);
+    if(current_selection == load_drawing)
+      tft.setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.drawString("Carica", 240, 220, GFXFF);
 
     //Bottom right
     tft.setTextDatum(BR_DATUM);
@@ -102,5 +122,5 @@ void Menu::printSelection(){
       tft.setTextColor(TFT_BLACK, TFT_YELLOW);
     else 
       tft.setTextColor(TFT_BLACK, TFT_WHITE);
-    tft.drawString("Salva immagine", 460, 220, GFXFF);
+    tft.drawString("Salva", 460, 220, GFXFF);
 }

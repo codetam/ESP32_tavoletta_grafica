@@ -14,12 +14,14 @@ class ConnectionHandler{
         String dBusername;
         String dBpassword;
         DrawingTablet* tablet;
+        String current_ip;
     public:
         ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet);
         void setup();
         int post_to_server(String serverName, int port, String subfolder, String postData);
         void createWebServer();
         void upload();
+        String getIP();
 };
 
 #endif

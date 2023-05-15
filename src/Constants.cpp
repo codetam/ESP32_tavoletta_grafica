@@ -33,3 +33,37 @@ uint16_t getColorFromChar(char num){
   }
   return color;
 }
+
+String getColorStringFromChar(char num){
+  String color;
+  switch(num){
+    case '0':
+      color = "Nero";
+      break;
+    case '1':
+      color = "Bianco";
+      break;
+    case 'L':
+      color = "Grigio chiaro";
+      break;
+    case 'D':
+      color = "Grigio scuro";
+      break;
+    case 'B':
+      color = "Blu";
+      break;
+    case 'G':
+      color = "Verde";
+      break;
+    case 'R':
+      color = "Rosso";
+      break;
+    case 'Y':
+      color = "Giallo";
+      break;
+    case 'O':
+      color = "Arancione";
+      break;
+  }
+  return color;
+}

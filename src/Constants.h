@@ -7,6 +7,8 @@
 
 #define MAX_X 120  //480
 #define MAX_Y 80   //320
+#define LCD_ROWS 2
+#define LCD_COLUMNS 16
 
 #define PIN_Y 34      //devo usare ADC_1 altrimenti il controller + wifi non funziona
 #define PIN_X 35      //devo usare ADC_1 altrimenti il controller + wifi non funziona
@@ -34,7 +36,8 @@ enum menu_selection{
     change_color,
     draw,
     color,
-    change_brush_size,
+    reset,
+    load_drawing,
     save_drawing
 };
 
@@ -50,6 +53,14 @@ enum brush_size{
   large
 };
 
+enum lcd_state{
+  lcd_drawing,
+  lcd_coloring,
+  lcd_connecting,
+  lcd_loading,
+};
+
 uint16_t getColorFromChar(char num);
+String getColorStringFromChar(char num);
 
 #endif
