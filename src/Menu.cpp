@@ -28,9 +28,9 @@ void Menu::switchSelection(direction current_direction){
         current_selection = color;
         break;
       case color:
-        current_selection = reset;
+        current_selection = connect;
         break;
-      case reset:
+      case connect:
         current_selection = load_drawing;
         break;
       case load_drawing:
@@ -52,11 +52,11 @@ void Menu::switchSelection(direction current_direction){
       case color:
         current_selection = change_color;
         break;
-      case reset:
+      case connect:
         current_selection = color;
         break;
       case load_drawing:
-        current_selection = reset;
+        current_selection = connect;
         break;
       case save_drawing:
         current_selection = load_drawing;
@@ -102,11 +102,11 @@ void Menu::printSelection(){
 
     //Bottom left
     tft.setTextDatum(BL_DATUM);
-    if(current_selection == reset)
+    if(current_selection == connect)
       tft.setTextColor(TFT_BLACK, TFT_YELLOW);
     else 
       tft.setTextColor(TFT_BLACK, TFT_WHITE);
-    tft.drawString("Reset", 20, 220, GFXFF);
+    tft.drawString("Connect", 20, 220, GFXFF);
 
     //Bottom center
     tft.setTextDatum(BC_DATUM);

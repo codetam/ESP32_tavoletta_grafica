@@ -14,6 +14,8 @@
 #define PIN_X 35      //devo usare ADC_1 altrimenti il controller + wifi non funziona
 #define PIN_PUSHBTN 25
 #define PIN_LONEBTN 2
+#define PIN_SCL 22
+#define PIN_SDA 21
 #define NUM_SELECTIONS 3
 #define NUM_MENU_SELECTIONS 5
 
@@ -36,7 +38,7 @@ enum menu_selection{
     change_color,
     draw,
     color,
-    reset,
+    connect,
     load_drawing,
     save_drawing
 };
@@ -58,6 +60,7 @@ enum lcd_state{
   lcd_coloring,
   lcd_connecting,
   lcd_loading,
+  lcd_print_string,
 };
 
 uint16_t getColorFromChar(char num);

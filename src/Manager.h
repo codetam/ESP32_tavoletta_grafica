@@ -8,11 +8,14 @@ class Manager{
         bool bucketEnabled;
         bool printColorWheel;
         bool save;
+        bool connect;
+
     public:
         Manager();
         void switchToMenu();            // Modalità menu
         void switchToColorWheel();      // Modalità menu
         void switchToSavingMode();      // Modalità menu
+        void switchToConnectingMode();  // Modalità menu
         void switchToTablet();          // Modalità tablet
         void switchToCursor();          // Modalità tablet
         void switchToBucket();          // Modalità tablet
@@ -24,6 +27,7 @@ class Manager{
 
         bool shouldPrintColorWheel(){ return printColorWheel; }
         bool shouldSave(){ return save; }
+        bool shouldConnect(){ return connect; }
         bool isBucketEnabled(){ return bucketEnabled; }
 };
 

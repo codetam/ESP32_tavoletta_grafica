@@ -23,11 +23,7 @@ void ConnectionHandler::setup()
   while (WiFi.status() != WL_CONNECTED)
   { // Check for the connection
     delay(1000);
-    Serial.println("Connecting to WiFi..");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
   current_ip = WiFi.localIP().toString();
 }
 
@@ -39,13 +35,11 @@ int ConnectionHandler::post_to_server(String serverName, int port, String subfol
     http.begin(serverName, port, subfolder);
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int httpCode = http.POST(postData);
-    Serial.println(httpCode);
     http.end();
     return httpCode;
   }
   else
   {
-    Serial.println("Error in WiFi connection");
     return -1;
   }
 }
@@ -82,8 +76,6 @@ void ConnectionHandler::createWebServer()
               this->dBusername = uid;
               this->dBpassword = pwd;
               this->isLoggedIn = true;
-              Serial.println("Username: " + this->dBusername);
-              Serial.println("Password: " + this->dBpassword);
             }
             else{
               request->send(200, "text/html", WRONG_CREDS);
@@ -96,8 +88,6 @@ void ConnectionHandler::createWebServer()
                 this->dBusername = uid;
                 this->dBpassword = pwd;
                 this->isLoggedIn = true;
-                Serial.println("Username: " + this->dBusername);
-                Serial.println("Password: " + this->dBpassword);
                 break;
               case 401:
                 request->send(200, "text/html", INVALID_UID);
@@ -123,17 +113,10 @@ void ConnectionHandler::createWebServer()
   server.begin();
 }
 
-void ConnectionHandler::upload()
+int ConnectionHandler::upload()
 {
-  int status = post_to_server("iot.dayngine.com", 8056, "/remote/upload_image.php", "uid=" + dBusername + "&pwd=" + dBpassword + "&sent_image=" + tablet->stringify());
-  if (status == 200)
-  {
-    Serial.println("Immagine salvata con successo.");
-  }
-  else
-  {
-    Serial.println("Errore durante il salvataggio dell'immagine.");
-  }
+  int status = post_to_server("http://iot.dayngine.com", 8056, "/remote/upload_image.php", "uid=" + dBusername + "&pwd=" + dBpassword + "&sent_image=" + "tablet->stringify()");
+  return status;
 }
 
 String ConnectionHandler::getIP(){

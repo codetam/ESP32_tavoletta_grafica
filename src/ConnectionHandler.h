@@ -20,7 +20,7 @@ class ConnectionHandler{
         void setup();
         int post_to_server(String serverName, int port, String subfolder, String postData);
         void createWebServer();
-        void upload();
+        int upload();   // handle case 200
         String getIP();
 };
 

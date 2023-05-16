@@ -6,8 +6,6 @@
 #include "src/ConnectionHandler.h"
 #include "src/LCDDisplay.h"
 
-TaskHandle_t runDisplay;
-
 DrawingTablet* tablet;
 Controller* controller;
 Menu* menu;
@@ -20,6 +18,8 @@ unsigned long last_millis_controller_btn = 0;
 unsigned long last_millis_lone_btn = 0;
 long debouncing_time = 1000;  //millisecondi
 
+SemaphoreHandle_t mutex;
+
 void run_display(void* ptr){
   char curr_color;
   lcd_state curr_state;
@@ -27,6 +27,7 @@ void run_display(void* ptr){
   lcd_state prev_state = display->getState();
   display->print();
   while(true){
+    xSemaphoreTake(mutex, portMAX_DELAY);
     curr_color = display->getColor();
     curr_state = display->getState();
     if(prev_state != curr_state || prev_color != curr_color){
@@ -34,6 +35,8 @@ void run_display(void* ptr){
       prev_state = curr_state;
       display->print();
     }
+    xSemaphoreGive(mutex);
+    delay(500);
   }
 }
 
@@ -60,27 +63,29 @@ void controllerButtonPressed()                                      // Se il con
   if (millis() - last_millis_lone_btn > debouncing_time)            // Verifica il debouncing
   {
     if(manager->shouldShowMenu())                                   // Può selezionare un nuovo colore, salvare 
-    {                                                               // l'immagine o cambiare a modalità tablet
-      if (menu->getSelection() == change_color)                     
-      {
-        if(manager->shouldPrintColorWheel())                        // se mostra la color wheel
-        {
-          manager->switchToMenu();                                  // passa a modalità menu  
-          menu->print();                                            // stampa il menu
-        }
-        else                                                        // se è in modalità menu
-        {
-          color_wheel->setShouldPrint();                            // stampa la color wheel                
-          manager->switchToColorWheel();                            // passa in modalità color wheel
-        }  
-      }
-      else if(menu->getSelection() == save_drawing)
-      {
-        manager->switchToSavingMode();
-      }
-      else
-      {
-        manager->switchToTablet();
+    { 
+      switch(menu->getSelection()){
+        case change_color:
+          if(manager->shouldPrintColorWheel())                        // se mostra la color wheel
+          {
+            manager->switchToMenu();                                  // passa a modalità menu  
+            menu->print();                                            // stampa il menu
+          }
+          else                                                        // se è in modalità menu
+          {
+            color_wheel->setShouldPrint();                            // stampa la color wheel                
+            manager->switchToColorWheel();                            // passa in modalità color wheel
+          }
+          break;
+        case save_drawing:
+          manager->switchToSavingMode();
+          break;
+        case connect:
+          manager->switchToConnectingMode();
+          break;
+        default:
+          manager->switchToTablet();
+          break;
       }
     }
     else                                                            // Può passare da cursore a pennello
@@ -104,37 +109,32 @@ void controllerButtonPressed()                                      // Se il con
 
 void setup(void)
 {
+  mutex = xSemaphoreCreateMutex();
+  //Serial.begin(115200);
   display = new LCDDisplay();
   display->init();
+  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
+
+  manager = new Manager();
+  controller = new Controller();
+  tablet = new DrawingTablet();
+  tablet->startDriver();
+  menu = new Menu(tablet->get_driver(), connection_handler);
+  color_wheel = new ColorWheel(tablet->get_driver());
+
+  attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
+  attachInterrupt(digitalPinToInterrupt(PIN_LONEBTN), loneButtonPressed, RISING);
+
+  display->setState(lcd_drawing);
+  
   xTaskCreatePinnedToCore(
       run_display, /* Function to implement the task */
       "runDisplay", /* Name of the task */
       10000,  /* Stack size in words */
       NULL,  /* Task input parameter */
       0,  /* Priority of the task */
-      &runDisplay,  /* Task handle. */
-      1); /* Core where the task should run */
-  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
-  manager = new Manager();
-  controller = new Controller();
-  tablet = new DrawingTablet();
-  tablet->startDriver();
-
-
-  Serial.begin(115200);
-
-  display->setState(lcd_connecting);
-  connection_handler->setup();
-  display->setIP(connection_handler->getIP());
-  display->setState(lcd_drawing);
-  connection_handler->createWebServer();
-
-  
-  menu = new Menu(tablet->get_driver(), connection_handler);
-  color_wheel = new ColorWheel(tablet->get_driver());
-
-  attachInterrupt(digitalPinToInterrupt(PIN_PUSHBTN), controllerButtonPressed, RISING);
-  attachInterrupt(digitalPinToInterrupt(PIN_LONEBTN), loneButtonPressed, RISING);
+      NULL,  /* Task handle. */
+      0); /* Core where the task should run */
 }
 
 void loop()
@@ -154,16 +154,32 @@ void loop()
         display->setColor(color_wheel->getColor());                    
         color_wheel->setShouldPrint();
       }
-
+      xSemaphoreTake(mutex, portMAX_DELAY);
       color_wheel->print();                                                   // Ri-stampa solo se setShouldPrint() è chiamata
+      xSemaphoreGive(mutex);
     }
     else if(manager->shouldSave())
     {
       display->setState(lcd_loading);
-      connection_handler->upload();                                           // Viene caricata l'immagine sul database
-      display->setState(lcd_drawing);                                       
-      manager->switchToMenu();                                                // Viene stampato il menu
-      menu->print();
+      delay(100);
+      int httpCode = connection_handler->upload();                            //  L'immagine viene caricata sul database
+      display->setString("Status code:", String(httpCode));
+      display->setState(lcd_print_string);
+      manager->switchToMenu();
+      xSemaphoreTake(mutex, portMAX_DELAY);
+      menu->print();                                                          // Viene stampato il menu
+      xSemaphoreGive(mutex);
+    }
+    else if(manager->shouldConnect()){
+      display->setState(lcd_connecting);
+      connection_handler->setup();
+      display->setIP(connection_handler->getIP());
+      display->setState(lcd_drawing);
+      connection_handler->createWebServer();                                       
+      manager->switchToMenu();                                                  
+      xSemaphoreTake(mutex, portMAX_DELAY);
+      menu->print();                                                          // Viene stampato il menu
+      xSemaphoreGive(mutex);
     }
     else 
     {
@@ -173,7 +189,9 @@ void loop()
       if (menu->getSelection() != current_selection) 
       {
         tablet->setMode(menu->getSelection());                                // Aggiorna la modalità della tavoletta 
+        xSemaphoreTake(mutex, portMAX_DELAY);
         menu->printSelection();                                               // Ri-stampa solo se la selezione è cambiata
+        xSemaphoreGive(mutex);
       }
     }
     delay(100);
@@ -188,8 +206,10 @@ void loop()
       else if(tablet->getMode() == coloring){
         display->setState(lcd_coloring);
       }
+      xSemaphoreTake(mutex, portMAX_DELAY);
       tablet->print();                                                        // Viene svuotato il menu e ricaricato il disegno precedente
       manager->switchToCursor();
+      xSemaphoreGive(mutex);
     }
 
     if (manager->isBucketEnabled())                                           //modalità bucket

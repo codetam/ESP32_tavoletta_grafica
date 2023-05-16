@@ -10,14 +10,21 @@ class LCDDisplay{
         lcd_state current_state;
         char current_color;
         String ip;
+        String s1;
+        String s2;
         void print_drawing();
         void print_coloring();
         void print_connecting();
         void print_loading();
+        void print_string();
     public:
         LCDDisplay();
         void setState(lcd_state state){
             current_state = state;
+        }
+        void setString(String string1, String string2){
+            s1 = string1;
+            s2 = string2;
         }
         void setColor(char color){
             current_color = color;

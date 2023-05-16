@@ -10,6 +10,7 @@ void Manager::switchToMenu(){
     printTablet = true;
     bucketEnabled = false;
     save =  false;
+    connect = false;
 }
 
 void Manager::switchToColorWheel(){
@@ -18,6 +19,7 @@ void Manager::switchToColorWheel(){
     printTablet = false;
     bucketEnabled = false;
     save =  false;
+    connect = false;
 }
 
 void Manager::switchToSavingMode(){
@@ -26,6 +28,16 @@ void Manager::switchToSavingMode(){
     printTablet = false;
     bucketEnabled = false;
     save =  true;
+    connect = false;
+}
+
+void Manager::switchToConnectingMode(){
+    showMenu = true;
+    printColorWheel = false;
+    printTablet = false;
+    bucketEnabled = false;
+    save =  false;
+    connect = true;
 }
 
 void Manager::switchToTablet(){
@@ -34,6 +46,7 @@ void Manager::switchToTablet(){
     printTablet = true;
     bucketEnabled = false;
     save =  false;
+    connect = false;
 }
 
 void Manager::switchToCursor(){
@@ -42,6 +55,7 @@ void Manager::switchToCursor(){
     printTablet = false;
     bucketEnabled = false;
     save =  false;
+    connect = false;
 }
 
 void Manager::switchToBucket(){
@@ -50,4 +64,5 @@ void Manager::switchToBucket(){
     printTablet = false;
     bucketEnabled = true;
     save =  false;
+    connect = false;
 }
