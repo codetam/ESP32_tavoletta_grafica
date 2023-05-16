@@ -28,6 +28,9 @@
 #define YELLOW 6
 #define ORANGE 7
 
+extern char post_data[10000];
+extern char pixelString[9600];
+
 enum direction{
   left,
   right,

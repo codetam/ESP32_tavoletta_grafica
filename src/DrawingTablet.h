@@ -29,7 +29,7 @@ class DrawingTablet{
     void colorArea(int x, int y, char new_color);
     void setCurrentColor(char color){ current_color = color; }
     char getCurrentColor() { return current_color; }
-    String stringify();
+    void stringify();
 };
 
 #endif

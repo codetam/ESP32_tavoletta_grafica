@@ -119,14 +119,14 @@ bool DrawingTablet::checkCoordinates(int x, int y){
   return(x >= 0 && x < MAX_X && y >= 0 && y < MAX_Y);
 }
 
-String DrawingTablet::stringify(){
-  String result = "";
+void DrawingTablet::stringify(){
+  int k = 0;
   for(int i=0; i<MAX_X; i++){
     for(int j=0; j<MAX_Y; j++){
-      result += pixelMatrix[i][j];
+      pixelString[k] = pixelMatrix[i][j];
+      k++;
     }
   }
-  return result;
 }
 
 /*

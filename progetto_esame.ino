@@ -5,7 +5,7 @@
 #include "src/Manager.h"
 #include "src/ConnectionHandler.h"
 #include "src/LCDDisplay.h"
-
+#define CONFIG_ARDUINO_DEBUG_LEVEL CoreDebugLevel::INFO
 DrawingTablet* tablet;
 Controller* controller;
 Menu* menu;
@@ -110,7 +110,7 @@ void controllerButtonPressed()                                      // Se il con
 void setup(void)
 {
   mutex = xSemaphoreCreateMutex();
-  //Serial.begin(115200);
+  Serial.begin(115200);
   display = new LCDDisplay();
   display->init();
   connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
@@ -130,11 +130,11 @@ void setup(void)
   xTaskCreatePinnedToCore(
       run_display, /* Function to implement the task */
       "runDisplay", /* Name of the task */
-      10000,  /* Stack size in words */
+      4096,  /* Stack size in words */
       NULL,  /* Task input parameter */
       0,  /* Priority of the task */
-      NULL,  /* Task handle. */
-      0); /* Core where the task should run */
+     NULL,  /* Task handle. */
+     0); /* Core where the task should run */
 }
 
 void loop()
@@ -161,7 +161,6 @@ void loop()
     else if(manager->shouldSave())
     {
       display->setState(lcd_loading);
-      delay(100);
       int httpCode = connection_handler->upload();                            //  L'immagine viene caricata sul database
       display->setString("Status code:", String(httpCode));
       display->setState(lcd_print_string);
