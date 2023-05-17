@@ -80,6 +80,9 @@ void controllerButtonPressed()                                      // Se il con
         case save_drawing:
           manager->switchToSavingMode();
           break;
+        case load_drawing:
+          manager->switchToLoadingMode();
+          break;
         case connect:
           manager->switchToConnectingMode();
           break;
@@ -150,8 +153,8 @@ void loop()
 
       if (color_wheel->getColor() != current_color)                           // Il colore è stato cambiato
       {
-        tablet->setCurrentColor(color_wheel->getColor()); 
-        display->setColor(color_wheel->getColor());                    
+        tablet->setCurrentColor(color_wheel->getColor());
+        display->setColor(color_wheel->getColor());
         color_wheel->setShouldPrint();
       }
       xSemaphoreTake(mutex, portMAX_DELAY);
@@ -164,7 +167,7 @@ void loop()
       tablet->stringify();
       int httpCode = connection_handler->upload();                            //  L'immagine viene caricata sul database
       if(httpCode == 200){
-        display->setString("Immagine salvata", "con successo.");        
+        display->setString("Immagine salvata", "con successo.");
       }
       else{
         display->setString("Errore durante", "il salvataggio.");
@@ -174,6 +177,11 @@ void loop()
       xSemaphoreTake(mutex, portMAX_DELAY);
       menu->print();                                                          // Viene stampato il menu
       xSemaphoreGive(mutex);
+    }
+    else if(manager->shouldLoad()){
+      tablet->replaceTablet();
+      Serial.println("Replacing");
+      manager->switchToTablet();
     }
     else if(manager->shouldConnect()){
       display->setState(lcd_connecting);

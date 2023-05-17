@@ -30,6 +30,7 @@ class DrawingTablet{
     void setCurrentColor(char color){ current_color = color; }
     char getCurrentColor() { return current_color; }
     void stringify();
+    void replaceTablet();
 };
 
 #endif

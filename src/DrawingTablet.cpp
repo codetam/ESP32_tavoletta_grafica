@@ -129,3 +129,13 @@ void DrawingTablet::stringify(){
   }
   pixelString[k] = '\0';
 }
+
+void DrawingTablet::replaceTablet(){
+  int k = 0;
+  for(int i=0; i<MAX_X; i++){
+    for(int j=0; j<MAX_Y; j++){
+      pixelMatrix[i][j] = post_data[k];
+      k++;
+    }
+  }
+}

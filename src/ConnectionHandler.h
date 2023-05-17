@@ -15,10 +15,11 @@ class ConnectionHandler{
         String dBpassword;
         DrawingTablet* tablet;
         String current_ip;
+        String imageId;
     public:
         ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet);
         void setup();
-        int post_to_server(String serverName, int port, String subfolder, String postData);
+        int post_to_server(String serverName, int port, String subfolder, String postData, bool savePayload);
         void createWebServer();
         int upload();   // handle case 200
         String getIP();
