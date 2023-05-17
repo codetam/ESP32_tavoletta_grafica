@@ -22,6 +22,8 @@ class ConnectionHandler{
         void createWebServer();
         int upload();   // handle case 200
         String getIP();
+        String getUid(){ return dBusername; }
+        String getPwd(){ return dBpassword; }
 };
 
 #endif

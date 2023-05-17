@@ -1,7 +1,7 @@
 #include "Constants.h"
 
 char post_data[10000];
-char pixelString[9600];
+char pixelString[9601];
 
 uint16_t getColorFromChar(char num){
   uint16_t color;

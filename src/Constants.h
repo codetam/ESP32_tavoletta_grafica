@@ -29,7 +29,7 @@
 #define ORANGE 7
 
 extern char post_data[10000];
-extern char pixelString[9600];
+extern char pixelString[9601];
 
 enum direction{
   left,

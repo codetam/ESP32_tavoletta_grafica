@@ -115,18 +115,21 @@ void ConnectionHandler::createWebServer()
 
 int ConnectionHandler::upload()
 {
-  tablet->stringify(); //FUCKING CRASH
   strcpy(post_data, "uid=");
   strcat(post_data, dBusername.c_str());
   strcat(post_data, "&pwd=");
   strcat(post_data, dBpassword.c_str());
   strcat(post_data, "&sent_image=");
   strcat(post_data, pixelString);
-  //int status = post_to_server("http://iot.dayngine.com", 8056, "/remote/upload_image.php", "uid=" + dBusername + "&pwd=" + dBpassword + "&sent_image=" + tablet->stringify());
+
   int status = post_to_server("http://iot.dayngine.com", 8056, "/remote/upload_image.php", post_data);
   return status;
 }
 
 String ConnectionHandler::getIP(){
   return current_ip;
+}
+
+int ConnectionHandler::load(){
+  
 }

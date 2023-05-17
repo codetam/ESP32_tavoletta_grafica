@@ -127,25 +127,5 @@ void DrawingTablet::stringify(){
       k++;
     }
   }
+  pixelString[k] = '\0';
 }
-
-/*
-void DrawingTablet::drawBrush(int x, int y, char color){
-  switch (brush){
-    case small:
-      drawPixel(x, y, color);
-    case medium:
-      for(int i=0; i<2; i++){
-        for(int j=0; j<2; j++){
-          drawPixel(x + i, y + j, color);
-        }
-      } 
-    case large:
-      for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-          drawPixel(x + i, y + j, color);
-        }
-      }     
-  }
-}
-*/

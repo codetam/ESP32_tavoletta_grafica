@@ -130,7 +130,7 @@ void setup(void)
   xTaskCreatePinnedToCore(
       run_display, /* Function to implement the task */
       "runDisplay", /* Name of the task */
-      4096,  /* Stack size in words */
+      20000,  /* Stack size in words */
       NULL,  /* Task input parameter */
       0,  /* Priority of the task */
      NULL,  /* Task handle. */
@@ -161,8 +161,14 @@ void loop()
     else if(manager->shouldSave())
     {
       display->setState(lcd_loading);
+      tablet->stringify();
       int httpCode = connection_handler->upload();                            //  L'immagine viene caricata sul database
-      display->setString("Status code:", String(httpCode));
+      if(httpCode == 200){
+        display->setString("Immagine salvata", "con successo.");        
+      }
+      else{
+        display->setString("Errore durante", "il salvataggio.");
+      }
       display->setState(lcd_print_string);
       manager->switchToMenu();
       xSemaphoreTake(mutex, portMAX_DELAY);
