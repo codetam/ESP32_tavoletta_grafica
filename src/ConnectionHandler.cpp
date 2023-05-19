@@ -13,7 +13,7 @@ const char* PROFILE_HTML="<!DOCTYPE html> <html> <head> <meta name='viewport' co
 const char* IMAGE_LOADED="<!DOCTYPE html> <html> <head> <meta name='viewport' content='width=device-width, initial-scale=1'> <style> * { box-sizing: border-box; } body { margin: 0; font-family: 'Roboto', sans-serif; background-color: #f5f5f5; } .logo { margin-right: auto; margin-left: auto; display: block; } .navbar { background-color: #f5f5f5; padding: 16px; display: flex; justify-content: space-between; align-items: center; } .navbar img { height: 75px; } .container { padding: 40px; background-color: #F7F7F7; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px; max-width: 400px; margin: 5px auto; text-align: center; } h2 { font-size: 24px; font-weight: 500; margin-bottom: 20px; } p { font-size: 16px; margin-bottom: 20px; } .message { font-size: 15px; font-weight: 500; margin-bottom: 20px; } .button { display: block; background-color: #1a73e8; color: white; padding: 12px; margin: 16px 0 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 500; letter-spacing: 0.03em; transition: background-color 0.2s ease; width: 100%; } .button:hover { background-color: #0c5dd1; } a { text-decoration: none; } </style> </head> <body> <div class='navbar'> <img class='logo' src='https://i.ibb.co/yPBvMrD/logo-min.png'></div> <div class='container'> <h2>Immagine caricata con successo</h2> <p class='message'> Per caricare un'altra immagine vai su Cambia Immagine. </p> <a href='/profile' class='button'>Cambia Immagine</a> </div> </body> </html>";
 const char* IMAGE_NOT_LOADED="<!DOCTYPE html> <html> <head> <meta name='viewport' content='width=device-width, initial-scale=1'> <style> * { box-sizing: border-box; } body { margin: 0; font-family: 'Roboto', sans-serif; background-color: #f5f5f5; } .logo { margin-right: auto; margin-left: auto; display: block; } .navbar { background-color: #f5f5f5; padding: 16px; display: flex; justify-content: space-between; align-items: center; } .navbar img { height: 75px; } .container { padding: 40px; background-color: #F7F7F7; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px; max-width: 400px; margin: 5px auto; text-align: center; } h2 { font-size: 24px; font-weight: 500; margin-bottom: 20px; } p { font-size: 16px; margin-bottom: 20px; } .message { font-size: 15px; font-weight: 500; margin-bottom: 20px; } .button { display: block; background-color: #1a73e8; color: white; padding: 12px; margin: 16px 0 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 500; letter-spacing: 0.03em; transition: background-color 0.2s ease; width: 100%; } .button:hover { background-color: #0c5dd1; } a { text-decoration: none; } </style> </head> <body> <div class='navbar'> <img class='logo' src='https://i.ibb.co/yPBvMrD/logo-min.png'></div> <div class='container'> <h2>ID non corretto!</h2> <p class='message'> Per caricare un'altra immagine vai su Cambia Immagine. </p> <a href='/profile' class='button'>Cambia Immagine</a> </div> </body> </html>";
 
-ConnectionHandler::ConnectionHandler(char *ssid, char *password, DrawingTablet *tablet) : ssid(ssid), password(password), tablet(tablet)
+ConnectionHandler::ConnectionHandler(char *ssid, char *password, DrawingTablet *tablet, MqttHandler* mqtt_handler) : ssid(ssid), password(password), tablet(tablet), mqtt_handler(mqtt_handler)
 {
   isLoggedIn = false;
   dBusername = "";
@@ -29,6 +29,7 @@ void ConnectionHandler::setup()
     delay(1000);
   }
   current_ip = WiFi.localIP().toString();
+  mqtt_handler->connect();
 }
 
 int ConnectionHandler::post_to_server(String serverName, int port, String subfolder, String postData, bool savePayload)
@@ -83,6 +84,8 @@ void ConnectionHandler::createWebServer()
               this->dBusername = uid;
               this->dBpassword = pwd;
               this->isLoggedIn = true;
+              char* topic = const_cast<char*> (("gtab/" + uid).c_str()); // c_str() ritorna un const char*, ma voglio un char*
+              mqtt_handler->subscribe(topic);
             }
             else{
               request->send(200, "text/html", WRONG_CREDS);

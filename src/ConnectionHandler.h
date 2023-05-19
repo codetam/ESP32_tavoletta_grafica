@@ -5,6 +5,7 @@
 #include <HTTPClient.h>
 #include "ESPAsyncWebServer.h"
 #include "DrawingTablet.h"
+#include "MqttHandler.h"
 
 class ConnectionHandler{
     private:
@@ -14,10 +15,11 @@ class ConnectionHandler{
         String dBusername;
         String dBpassword;
         DrawingTablet* tablet;
+        MqttHandler* mqtt_handler;
         String current_ip;
         String imageId;
     public:
-        ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet);
+        ConnectionHandler(char* ssid, char* password, DrawingTablet* tablet, MqttHandler* mqtt_handler);
         void setup();
         int post_to_server(String serverName, int port, String subfolder, String postData, bool savePayload);
         void createWebServer();

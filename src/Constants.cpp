@@ -2,6 +2,7 @@
 
 char post_data[10000];
 char pixelString[9601];
+char imageId[10];
 
 uint16_t getColorFromChar(char num){
   uint16_t color;

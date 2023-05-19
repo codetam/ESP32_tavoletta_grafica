@@ -30,6 +30,7 @@
 
 extern char post_data[10000];
 extern char pixelString[9601];
+extern char imageId[10];
 
 enum direction{
   left,

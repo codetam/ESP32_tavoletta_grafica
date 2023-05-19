@@ -4,15 +4,17 @@
 #include "src/ColorWheel.h"
 #include "src/Manager.h"
 #include "src/ConnectionHandler.h"
+#include "src/MqttHandler.h"
 #include "src/LCDDisplay.h"
-#define CONFIG_ARDUINO_DEBUG_LEVEL CoreDebugLevel::INFO
+
 DrawingTablet* tablet;
 Controller* controller;
 Menu* menu;
 ColorWheel* color_wheel;
 Manager* manager;
-ConnectionHandler* connection_handler;
 LCDDisplay* display;
+ConnectionHandler* connection_handler;
+MqttHandler* mqtt_handler;
 
 unsigned long last_millis_controller_btn = 0;
 unsigned long last_millis_lone_btn = 0;
@@ -116,9 +118,11 @@ void setup(void)
   Serial.begin(115200);
   display = new LCDDisplay();
   display->init();
-  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet);
 
   manager = new Manager();
+  mqtt_handler = new MqttHandler(manager);
+  connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet, mqtt_handler);
+
   controller = new Controller();
   tablet = new DrawingTablet();
   tablet->startDriver();
@@ -179,6 +183,15 @@ void loop()
       xSemaphoreGive(mutex);
     }
     else if(manager->shouldLoad()){
+      int status = connection_handler->post_to_server("iot.dayngine.com", 8056, "/remote/load_image.php", "uid=" + connection_handler->getUid() + "&pwd=" + connection_handler->getPwd() + "&imageId=" + imageId, true);
+      Serial.println("Message sent");
+      if(status == 200){
+        display->setString("Immagine caricata", "con successo");
+      }
+      else{
+        display->setString("Errore durante", "il caricamento");
+      }
+      delay(500);
       tablet->replaceTablet();
       Serial.println("Replacing");
       manager->switchToTablet();
