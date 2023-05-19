@@ -184,16 +184,17 @@ void loop()
     }
     else if(manager->shouldLoad()){
       int status = connection_handler->post_to_server("iot.dayngine.com", 8056, "/remote/load_image.php", "uid=" + connection_handler->getUid() + "&pwd=" + connection_handler->getPwd() + "&imageId=" + imageId, true);
-      Serial.println("Message sent");
       if(status == 200){
         display->setString("Immagine caricata", "con successo");
       }
       else{
         display->setString("Errore durante", "il caricamento");
       }
+      display->setState(lcd_print_string);
       delay(500);
+      xSemaphoreTake(mutex, portMAX_DELAY);
       tablet->replaceTablet();
-      Serial.println("Replacing");
+      xSemaphoreGive(mutex);
       manager->switchToTablet();
     }
     else if(manager->shouldConnect()){
