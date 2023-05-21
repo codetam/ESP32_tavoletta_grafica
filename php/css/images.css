@@ -1,0 +1,91 @@
+#images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 80%;
+    margin: 0 auto;
+    left: 20%;
+}
+
+/* Style the image container */
+.image-container {
+    width: 30%;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: inline-block;
+}
+
+/* Style the images */
+.image-container img {
+    width: 100%;
+    height: auto;
+}
+
+.image-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.lightbox-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+}
+
+.lightbox-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.lightbox-image img {
+    width: auto;
+    height: 80vh;
+    object-fit: contain;
+}
+
+.lightbox-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.delete-button {
+    background-color: rgb(225, 29, 72);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px; /* Add margin-right to create space between buttons */
+}
+
+.delete-button:hover {
+    background-color: rgb(136, 19, 55);
+}
+
+.load-button {
+    background-color: rgb(4 120 87);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.load-button:hover {
+    background-color: rgb(6, 78, 59);
+}
