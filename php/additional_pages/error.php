@@ -15,7 +15,7 @@ include_once "header.php";
             </div>
         </form>
         <h1>
-            <div id="username">Devi loggare per poter caricare un'immagine!</div>
+            <div id="general">Devi essere loggato per poter caricare un'immagine!</div>
         </h1>
     </div>
 </div>

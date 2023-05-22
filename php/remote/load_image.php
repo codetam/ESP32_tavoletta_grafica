@@ -1,5 +1,9 @@
 <?php
 
+/* 
+   Ritorna lo status code 200 e la stringa dell'immagine associata
+   solo se le credenziali corrispondono
+*/
 if(isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST["imageId"])){
     
     $username = $_POST['uid'];
@@ -18,9 +22,6 @@ if(isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST["imageId"])){
         http_response_code(401);
         exit();
     }
-
-    $row = uidExists($conn, $username);
-    $userId = $row['userId'];
 
     if($string_to_send = getImageFromId($conn, $imgId)){
         http_response_code(200);

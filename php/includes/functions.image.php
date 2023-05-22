@@ -51,7 +51,8 @@ function drawImage($image_string) {
     }
     return $gd;
 }
-//ritorna un array di stringhe dove ogni stringa corrisponde ad un'immagine
+
+/* Ritorna i record di immagini associate ad uno userId */
 function getUserImages($conn, $userId){
     $sql = "SELECT * FROM images WHERE userId = " . $userId . ";";
     $result = mysqli_query($conn, $sql);
@@ -62,6 +63,7 @@ function getUserImages($conn, $userId){
     return $imageList;
 }
 
+/* Ritorna tutti i record delle immagini */
 function getAllImages($conn){
     $sql = "SELECT * FROM images;";
     $result = mysqli_query($conn, $sql);

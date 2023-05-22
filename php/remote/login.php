@@ -1,5 +1,6 @@
 <?php
 
+/* Ritorna lo status code 200 solo se l'azione è stata effettuata con successo */
 if (isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST['action'])) {
     $username = $_POST["uid"];
     $pwd = $_POST["pwd"];
@@ -12,7 +13,7 @@ if (isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST['action'])) {
         exit();
     }
     if ($_POST['action'] == 'login') {
-        // Login button was clicked
+        /* E' stato cliccato il button di Login */
         if (loginUser($conn, $username, $pwd) === true) {
             http_response_code(200);
         } else {
@@ -21,7 +22,7 @@ if (isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST['action'])) {
         exit();
     } 
     elseif ($_POST['action'] == 'signup') {
-        // Signup button was clicked
+        /* E' stato cliccato il button di Registrazione */
         if (invalidUid($username) !== false) {
             http_response_code(401);
             exit();

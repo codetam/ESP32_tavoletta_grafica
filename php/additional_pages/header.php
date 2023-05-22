@@ -3,7 +3,7 @@ session_start();
 ?>
 
 <html lang="en" dir="ltr">
-
+<!-- Carica gli stylesheet e JS e fa partire la sessione -->
 <head>
     <meta charset="utf-8">
     <title>Tavoletta grafica</title>
@@ -16,6 +16,7 @@ session_start();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="../js/script.js"></script>
 </head>
+<!-- Carica la sidebar con button diversi in base alla sessione corrente -->
 <body>
 <nav>
     <div class="wrapper">

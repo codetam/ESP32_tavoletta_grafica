@@ -1,5 +1,6 @@
 <?php
 
+/* Crea un nuovo utente e lo inserisce nel database */
 function createUser($conn, $uid, $pwd)
 {
     $sql = "INSERT INTO users (userName,userPwd) VALUES(?,?);";
@@ -16,7 +17,7 @@ function createUser($conn, $uid, $pwd)
     return true;
 }
 
-
+/* Se un campo è vuoto ritorna false */
 function emptyInputSignup($uid, $pwd, $pwdrepeat)
 {
     if (empty($uid) || empty($pwd) || empty($pwdrepeat)) {
@@ -26,6 +27,7 @@ function emptyInputSignup($uid, $pwd, $pwdrepeat)
     }
 }
 
+/* Se le password non sono identiche ritorna false */
 function pwdDontMatch($pwd, $pwdrepeat)
 {
     if ($pwd !== $pwdrepeat) {
@@ -35,6 +37,7 @@ function pwdDontMatch($pwd, $pwdrepeat)
     }
 }
 
+/* Se lo username contiene caratteri speciali ritorna false */
 function invalidUid($uid)
 {
     if (!preg_match("/^[a-zA-Z0-9]*$/", $uid)) {
@@ -44,6 +47,7 @@ function invalidUid($uid)
     }
 }
 
+/* Se username o password sono vuote ritorna false */
 function emptyInputLogin($username, $pwd)
 {
     if (empty($username) || empty($pwd)) {
@@ -53,6 +57,7 @@ function emptyInputLogin($username, $pwd)
     }
 }
 
+/* Se lo username esiste ritorna la row associata, altrimenti ritorna false */
 function uidExists($conn, $username)
 {
     $sql = "SELECT * FROM users WHERE userName = ?;";
@@ -73,6 +78,7 @@ function uidExists($conn, $username)
     }
 }
 
+/* Ritorna true solo se username e password matchano */
 function loginUser($conn, $uid, $pwd)
 {
     $row = uidExists($conn, $uid);
@@ -86,12 +92,12 @@ function loginUser($conn, $uid, $pwd)
 
     if ($checkedPwd === false) {
         return false;
-    } 
-    else {
+    } else {
         return true;
     }
 }
 
+/* Inserisce una nuova immagine nel database */
 function uploadImage($conn, $username, $image)
 {
     if ($row = uidExists($conn, $username)) {
@@ -107,6 +113,7 @@ function uploadImage($conn, $username, $image)
     }
 }
 
+/* Ritorna la stringa associata all'immagine partendo dall'ID (non richiede uno userId) */
 function getImageFromId($conn, $imgId)
 {
     $sql = "SELECT code FROM images WHERE imageId = ?;";
@@ -127,6 +134,7 @@ function getImageFromId($conn, $imgId)
     }
 }
 
+/* Verifica che l'immagine corrisponda all'utente */
 function checkCorrespondency($conn, $userId, $image)
 {
     $sql = "SELECT * FROM images WHERE imageId = ?;";
@@ -140,14 +148,30 @@ function checkCorrespondency($conn, $userId, $image)
 
     if ($row = mysqli_fetch_assoc($resultData)) {
         mysqli_stmt_close($stmt);
-        if($row["userID"] === $userId){
-            return $row["code"];
-        }
-        else{
+        if ($row["userID"] === $userId) {
+            return true;
+        } else {
             return false;
         }
     } else {
         mysqli_stmt_close($stmt);
+        return false;
+    }
+}
+
+/* Elimina l'immagine dal database */
+function deleteImage($conn, $username, $imageId)
+{
+    if ($row = uidExists($conn, $username)) {
+        if (checkCorrespondency($conn, $row['userId'], $imageId) !== false) {
+            $sql = "DELETE FROM images WHERE imageId = '" . $imageId . "';";
+            if ($conn->query($sql) === TRUE) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    } else {
         return false;
     }
 }

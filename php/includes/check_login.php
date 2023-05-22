@@ -1,5 +1,6 @@
 <?php
 
+/* Verifica che tutto sia corretto e in caso contrario invia errori alla pagina precedente tramite GET */
 if(isset($_POST["submit"])){
 
     $uid = $_POST["uid"];
@@ -20,7 +21,7 @@ if(isset($_POST["submit"])){
         $row = uidExists($conn, $uid);
         session_start();
         $_SESSION["uid"] = $row["userName"];
-            header("location: ../profile.php");
+        header("location: ../profile.php");
         exit();
     }
 }

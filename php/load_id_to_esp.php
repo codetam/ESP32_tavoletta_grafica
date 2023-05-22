@@ -6,6 +6,7 @@ require('vendor/autoload.php');
 use \PhpMqtt\Client\MqttClient;
 use \PhpMqtt\Client\ConnectionSettings;
 
+/* Solo se l'utente è loggato e ha cliccato sul button Carica... */
 if (isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit'])) {
     $uid = $_SESSION['uid'];
     $imageId = $_POST['image'];

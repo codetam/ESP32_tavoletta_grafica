@@ -1,5 +1,6 @@
 <?php
 
+/* Verifica che tutto sia corretto e in caso contrario invia errori alla pagina precedente tramite GET */
 if (isset($_POST["submit"])) {
     $uid = $_POST["uid"];
     $pwd = $_POST["pwd"];
@@ -28,8 +29,12 @@ if (isset($_POST["submit"])) {
         header("location: ../signup.php?error=system_error");
         exit();
     }
-    header("location: ../signup.php?error=none");
-    exit();
+    else{
+        $row = uidExists($conn, $uid);
+        session_start();
+        $_SESSION["uid"] = $row["userName"];
+        header("location: ../signup.php?error=none");
+    }
 } 
 else {
     header("location: ../signup.php");

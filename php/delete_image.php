@@ -10,10 +10,8 @@ if(isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit']))
     require_once 'includes/db.access.php';
     require_once 'includes/functions.general.php';
 
-    $row = uidExists($conn, $username);
-    $userId = $row['userId'];
-
-    if(checkCorrespondency($conn, $userId, $imgId)){
+    /* L'immagine è stata eliminata solo se deleteImage ritorna true */
+    if(deleteImage($conn, $username, $imgId)){
 ?>
     <div id="content">
     <div id="header">
@@ -28,7 +26,7 @@ if(isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit']))
             </div>
         </form>
         <h1>
-            <div id="username">Immagine eliminata!</div>
+            <div id="general">Immagine eliminata!</div>
         </h1>
     </div>
     </div>
@@ -49,7 +47,7 @@ if(isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit']))
                 </div>
             </form>
             <h1>
-                <div id="username">Non puoi eliminare questa immagine!</div>
+                <div id="general">Non puoi eliminare questa immagine!</div>
             </h1>
         </div>
         </div>

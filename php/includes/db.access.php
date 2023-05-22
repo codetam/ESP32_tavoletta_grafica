@@ -1,5 +1,6 @@
 <?php
 
+/* Accede al database e inizializza la variabile associata alla connessione */
 $serverName = "database";
 $dBUsername = "root";
 $dBPassword = "WkG7vqWUF65W9o!z";

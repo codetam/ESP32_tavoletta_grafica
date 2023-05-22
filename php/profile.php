@@ -15,7 +15,7 @@ include_once "additional_pages/header.php";
             </div>
         </form>
         <?php
-        if (isset($_SESSION["uid"])) {
+        if (isset($_SESSION["uid"])) { // Controlla che la SESSION sia stata avviata (l'utente è loggato)
 
             require_once 'includes/db.access.php';
             require_once 'includes/functions.general.php';
@@ -27,7 +27,7 @@ include_once "additional_pages/header.php";
 
             ?>
             <h1>
-                <div id="username">
+                <div id="general">
                     <?php echo $username; ?>
                 </div>
             </h1>
@@ -37,6 +37,7 @@ include_once "additional_pages/header.php";
                 <div class="image-container">
                 <div class="image-wrapper">
                             <?php
+                            /* Viene stampata l'immagine su schermo */
                             ob_start();
                             imagepng(drawImage($image['code']));
                             $base64Image = base64_encode(ob_get_clean());
@@ -48,6 +49,7 @@ include_once "additional_pages/header.php";
                             <div class="lightbox-content">
                                 <div class="lightbox-image">
                                     <?php
+                                        /* Codice per il lightbox */
                                         ob_start();
                                         imagepng(drawImage($image['code']));
                                         $lightboxImage = base64_encode(ob_get_clean());
@@ -56,6 +58,7 @@ include_once "additional_pages/header.php";
                                     ?>
                                 </div>
                                 <div class="lightbox-buttons">
+                                    <!-- Codice per i button Carica e Elimina -->
                                     <form action="delete_image.php" method="post">
                                         <button type="submit" name="submit" class="delete-button">Elimina</button>
                                         <?php echo '<input type="hidden" name="image" value="' . $image['imageId'] . '">' ?>
@@ -71,10 +74,13 @@ include_once "additional_pages/header.php";
             <?php endforeach; ?>
         </div>
     </div>
-<?php } else { ?>
-        <h1>
-            <div id="username">Devi essere loggato per visualizzare questa pagina!</div>
-        </h1>
+<?php 
+    } 
+    else { 
+?>
+    <h1>
+        <div id="general">Devi essere loggato per visualizzare questa pagina!</div>
+    </h1>
     </div>
 </div>
 <?php 

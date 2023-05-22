@@ -15,7 +15,7 @@ include_once "header.php";
             </div>
         </form>
         <h1>
-            <div id="username">Immagine caricata con successo!</div>
+            <div id="general">Immagine caricata con successo!</div>
         </h1>
     </div>
 </div>

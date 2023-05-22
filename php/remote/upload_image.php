@@ -1,5 +1,6 @@
 <?php
 
+/* Ritorna lo status code 200 solo se l'immagine è stata salvata con successo */
 if( isset($_POST['uid']) && isset($_POST['pwd']) && isset($_POST['sent_image']) ){
     $username = $_POST["uid"];
     $pwd = $_POST["pwd"];
