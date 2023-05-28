@@ -1,11 +1,12 @@
+#include "src/Constants.h"
+#include "src/Manager.h"
 #include "src/DrawingTablet.h"
+#include "src/MqttHandler.h"
+#include "src/ConnectionHandler.h"
 #include "src/Controller.h"
+#include "src/LCDDisplay.h"
 #include "src/Menu.h"
 #include "src/ColorWheel.h"
-#include "src/Manager.h"
-#include "src/ConnectionHandler.h"
-#include "src/MqttHandler.h"
-#include "src/LCDDisplay.h"
 
 DrawingTablet* tablet;
 Controller* controller;
@@ -23,6 +24,7 @@ long debouncing_time = 1000;  //millisecondi
 SemaphoreHandle_t mutex;
 
 void run_display(void* ptr){
+  int i = 0;
   char curr_color;
   lcd_state curr_state;
   char prev_color = '0';
@@ -35,6 +37,11 @@ void run_display(void* ptr){
     if(prev_state != curr_state || prev_color != curr_color){
       prev_color = curr_color;
       prev_state = curr_state;
+      i++;
+      if(i > 10){
+        display->init();
+        i = 0;
+      }
       display->print();
     }
     xSemaphoreGive(mutex);
@@ -120,7 +127,7 @@ void setup(void)
   display->init();
 
   manager = new Manager();
-  mqtt_handler = new MqttHandler(manager);
+  mqtt_handler = new MqttHandler();
   connection_handler = new ConnectionHandler("Mi Note 10 Lite","gerardoMau",tablet, mqtt_handler);
 
   controller = new Controller();
@@ -168,30 +175,38 @@ void loop()
     else if(manager->shouldSave())
     {
       display->setState(lcd_loading);
-      tablet->stringify();
-      int httpCode = connection_handler->upload();                            //  L'immagine viene caricata sul database
-      if(httpCode == 200){
+      tablet->stringify();                                                    // Ricava la stringa dall'immagine e la pone in pixelString
+      strcpy(post_data, "uid=");
+      strcat(post_data, connection_handler->getUid().c_str());
+      strcat(post_data, "&pwd=");
+      strcat(post_data, connection_handler->getPwd().c_str());
+      strcat(post_data, "&sent_image=");
+      strcat(post_data, pixelString);
+      int status = connection_handler->post_to_server("iot.dayngine.com", 8056, "/remote/upload_image.php", post_data, false);    //  L'immagine viene caricata sul database
+      if(status == 200){
         display->setString("Immagine salvata", "con successo.");
       }
       else{
         display->setString("Errore durante", "il salvataggio.");
       }
       display->setState(lcd_print_string);
-      manager->switchToMenu();
+      delay(550);                                                             // Viene dato il tempo allo schermo LCD di stampare la stringa
       xSemaphoreTake(mutex, portMAX_DELAY);
+      manager->switchToMenu();
       menu->print();                                                          // Viene stampato il menu
       xSemaphoreGive(mutex);
     }
     else if(manager->shouldLoad()){
+      display->setState(lcd_loading);
       int status = connection_handler->post_to_server("iot.dayngine.com", 8056, "/remote/load_image.php", "uid=" + connection_handler->getUid() + "&pwd=" + connection_handler->getPwd() + "&imageId=" + imageId, true);
       if(status == 200){
-        display->setString("Immagine caricata", "con successo");
+        display->setString("Immagine", "caricata");
       }
       else{
         display->setString("Errore durante", "il caricamento");
       }
       display->setState(lcd_print_string);
-      delay(500);
+      delay(500);                                                             // Viene dato il tempo allo schermo LCD di stampare la stringa
       xSemaphoreTake(mutex, portMAX_DELAY);
       tablet->replaceTablet();
       xSemaphoreGive(mutex);
@@ -201,8 +216,9 @@ void loop()
       display->setState(lcd_connecting);
       connection_handler->setup();
       display->setIP(connection_handler->getIP());
+      connection_handler->createWebServer();  
       display->setState(lcd_drawing);
-      connection_handler->createWebServer();                                       
+      delay(500);                                     
       manager->switchToMenu();                                                  
       xSemaphoreTake(mutex, portMAX_DELAY);
       menu->print();                                                          // Viene stampato il menu

@@ -1,4 +1,6 @@
 #include "Constants.h"
+#include "TFT_eSPI.h"
+#include <SPI.h>
 
 char post_data[10000];
 char pixelString[9601];

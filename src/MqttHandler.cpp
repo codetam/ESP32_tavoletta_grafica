@@ -8,7 +8,7 @@
 static const char mqttUser[] = "gtab_user";
 static const char mqttPassword[] = "SX54NipFEVZjwm";
 
-MqttHandler::MqttHandler(Manager* manager) : manager(manager)
+MqttHandler::MqttHandler()
 {
   mqttClient = new AsyncMqttClient();
   mqttClient->setServer(MQTT_HOST, MQTT_PORT);
@@ -25,7 +25,10 @@ MqttHandler::MqttHandler(Manager* manager) : manager(manager)
       imageId[i] = payload[i];
     }
     imageId[total] = '\0';
-    this->manager->switchToLoadingMode();
+    Serial.print("New image saved. Payload: ");
+    Serial.print(payload);
+    Serial.print(", imageid: ");
+    Serial.println(imageId);
   });
 
 }
@@ -33,9 +36,12 @@ MqttHandler::MqttHandler(Manager* manager) : manager(manager)
 void MqttHandler::subscribe(char *topic)
 {
   uint16_t packetIdSub = mqttClient->subscribe(topic, 0);
+  Serial.print("Subscribed at topic: ");
+  Serial.println(topic);
 }
 
 void MqttHandler::connect()
 {
   mqttClient->connect();
+  Serial.println("MQTT connected");
 }

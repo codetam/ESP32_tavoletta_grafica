@@ -2,11 +2,12 @@
 #define LCDDISPLAY_H
 
 #include "Constants.h"
-#include <LiquidCrystal_I2C.h>
+
+class LiquidCrystal_I2C;
 
 class LCDDisplay{
     private:
-        LiquidCrystal_I2C lcd;
+        LiquidCrystal_I2C* lcd;
         lcd_state current_state;
         char current_color;
         String ip;

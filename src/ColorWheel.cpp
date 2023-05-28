@@ -1,6 +1,8 @@
+#include "TFT_eSPI.h"
+#include <SPI.h>
 #include "ColorWheel.h"
 
-ColorWheel::ColorWheel(TFT_eSPI tft_ready): tft(tft_ready){
+ColorWheel::ColorWheel(TFT_eSPI* tft_ready): tft(tft_ready){
     current_selection = 0;
     available_colors[0] = '0';
     available_colors[1] = '1';
@@ -15,18 +17,18 @@ ColorWheel::ColorWheel(TFT_eSPI tft_ready): tft(tft_ready){
 // Stampa la color wheel
 void ColorWheel::print(){
   if(shouldPrint){
-    tft.fillScreen(TFT_WHITE);
+    tft->fillScreen(TFT_WHITE);
     //header
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_BLUE);
-    tft.fillRect(0, 0, 480, 30, TFT_BLUE);
-    tft.setTextDatum(TC_DATUM);
-    tft.drawString("Colore", 239, 2, 4);
+    tft->setTextSize(1);
+    tft->setTextColor(TFT_WHITE, TFT_BLUE);
+    tft->fillRect(0, 0, 480, 30, TFT_BLUE);
+    tft->setTextDatum(TC_DATUM);
+    tft->drawString("Colore", 239, 2, 4);
 
     for(int i=0; i<MAX_X*4; i++){
         for(int j=30; j<MAX_Y*4/4; j++){   
             //stampa gli 8 colori in una line
-            tft.drawPixel(i,j,getColorFromChar(available_colors[i/(MAX_X/2)]));
+            tft->drawPixel(i,j,getColorFromChar(available_colors[i/(MAX_X/2)]));
         }
     }
     printSelection();
@@ -71,7 +73,7 @@ void ColorWheel::draw16pixels(int x, int y, uint16_t color){
   //Disegna su schermo mappando le coordinate a quelle dello schermo
   for(int i = x*4; i < x*4 + 4; i++){
     for(int j = y*4; j < y*4 + 4; j++){
-      tft.drawPixel(i,j,color);
+      tft->drawPixel(i,j,color);
     }
   }
 }

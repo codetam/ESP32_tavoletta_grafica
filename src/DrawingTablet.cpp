@@ -1,7 +1,12 @@
 #include "DrawingTablet.h"
+#include "TFT_eSPI.h"
+#include <SPI.h>
+#include <stack>
+#include <array>
 
 //inizializza la costante TFT
-DrawingTablet::DrawingTablet(): tft(TFT_eSPI()){
+DrawingTablet::DrawingTablet() {
+  tft = new TFT_eSPI();
   current_color = '0';
   initialize();
   //starts with the cursor mode
@@ -10,13 +15,13 @@ DrawingTablet::DrawingTablet(): tft(TFT_eSPI()){
 
 //fa partire il driver SPI
 void DrawingTablet::startDriver(){
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_WHITE);
+  tft->init();
+  tft->setRotation(1);
+  tft->fillScreen(TFT_WHITE);
 }
 
 //ritorna il driver TFT_eSPI
-TFT_eSPI DrawingTablet::get_driver(){
+TFT_eSPI* DrawingTablet::get_driver(){
   return tft;
 }
 
@@ -38,7 +43,7 @@ void DrawingTablet::drawPixel(int x, int y, char color){
   //Disegna su schermo mappando le coordinate della matrice a quelle dello schermo
   for(int i = x*4; i < x*4 + 4; i++){
     for(int j = y*4; j < y*4 + 4; j++){
-      tft.drawPixel(i,j,getColorFromChar(color));
+      tft->drawPixel(i,j,getColorFromChar(color));
     }
   }
 }

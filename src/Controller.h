@@ -1,7 +1,6 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "Arduino.h"
 #include "Constants.h"
 
 class Controller{

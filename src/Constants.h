@@ -1,9 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include "TFT_eSPI.h"
-#include <SPI.h>
-#include "Free_Fonts.h"
+#include "Arduino.h"
 
 #define MAX_X 120  //480
 #define MAX_Y 80   //320
@@ -51,12 +49,6 @@ enum tablet_mode{
   drawing,
   coloring,
   cursor
-};
-
-enum brush_size{
-  small,
-  medium,
-  large
 };
 
 enum lcd_state{
