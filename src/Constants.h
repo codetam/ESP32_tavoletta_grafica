@@ -8,8 +8,9 @@
 #define LCD_ROWS 2
 #define LCD_COLUMNS 16
 
-#define PIN_Y 34      //devo usare ADC_1 altrimenti il controller + wifi non funziona
-#define PIN_X 35      //devo usare ADC_1 altrimenti il controller + wifi non funziona
+// I pin sono invertiti
+#define PIN_Y 35      //devo usare ADC_1 altrimenti il controller + wifi non funziona
+#define PIN_X 34      //devo usare ADC_1 altrimenti il controller + wifi non funziona
 #define PIN_PUSHBTN 25
 #define PIN_LONEBTN 2
 #define PIN_SCL 22

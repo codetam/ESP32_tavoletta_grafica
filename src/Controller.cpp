@@ -17,12 +17,12 @@ void Controller::readInput() {
 
   //muove il cursore sullo schermo in base al valore dell'analogico
   if (analogX > 2500 && cursorX < MAX_X) {
-    cursorX++;
-    current_direction = right;
+    cursorX--;
+    current_direction = left; // invertito
   } 
   else if (analogX < 1500 && cursorX > 0 ) {
-    cursorX--;
-    current_direction = left;
+    cursorX++;
+    current_direction = right; // invertito
   }
   else{
     current_direction = center;

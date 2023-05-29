@@ -16,7 +16,7 @@ DrawingTablet::DrawingTablet() {
 //fa partire il driver SPI
 void DrawingTablet::startDriver(){
   tft->init();
-  tft->setRotation(1);
+  tft->setRotation(3);
   tft->fillScreen(TFT_WHITE);
 }
 
