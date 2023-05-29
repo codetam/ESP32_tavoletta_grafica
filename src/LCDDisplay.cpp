@@ -5,7 +5,7 @@ LCDDisplay::LCDDisplay() {
     lcd = new LiquidCrystal_I2C(0x27, LCD_COLUMNS, LCD_ROWS);
     current_color = '0';
 }
-// https://forum.arduino.cc/t/lcd-display-16x2-showing-gibberish-how-to-reset-solved/686104
+
 void LCDDisplay::init() {
     lcd->init();
     lcd->backlight();

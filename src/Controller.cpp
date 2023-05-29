@@ -15,14 +15,14 @@ void Controller::readInput() {
   analogX = analogRead(PIN_X);
   analogY = analogRead(PIN_Y);
 
-  //muove il cursore sullo schermo in base al valore dell'analogico
+  // Muove il cursore sullo schermo in base al valore dell'analogico
   if (analogX > 2500 && cursorX < MAX_X) {
     cursorX--;
-    current_direction = left; // invertito
+    current_direction = left; // Invertito
   } 
   else if (analogX < 1500 && cursorX > 0 ) {
     cursorX++;
-    current_direction = right; // invertito
+    current_direction = right; // Invertito
   }
   else{
     current_direction = center;

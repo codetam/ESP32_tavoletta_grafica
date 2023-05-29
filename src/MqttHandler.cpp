@@ -25,10 +25,12 @@ MqttHandler::MqttHandler()
       imageId[i] = payload[i];
     }
     imageId[total] = '\0';
+    /*
     Serial.print("New image saved. Payload: ");
     Serial.print(payload);
     Serial.print(", imageid: ");
     Serial.println(imageId);
+    */
   });
 
 }

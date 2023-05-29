@@ -10,7 +10,7 @@ Menu::Menu(TFT_eSPI* tft_ready, ConnectionHandler* conn): tft(tft_ready), conn(c
 
 void Menu::print(){
     tft->fillScreen(TFT_WHITE);
-    //header
+    // Header del Menu
     tft->setTextSize(1);
     tft->setTextColor(TFT_BLUE, TFT_LIGHTGREY);
     tft->fillRect(0, 0, 480, 30, TFT_LIGHTGREY);

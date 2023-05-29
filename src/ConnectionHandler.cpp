@@ -48,9 +48,7 @@ int ConnectionHandler::post_to_server(String serverName, int port, String subfol
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int httpCode = http.POST(postData);
     if(savePayload && httpCode == 200){
-      Serial.println("payload saved and status code = 200");
       strcpy(post_data, http.getString().c_str());
-      Serial.println("Saved payload");
     }
     http.end();
     return httpCode;
@@ -71,7 +69,6 @@ void ConnectionHandler::createWebServer()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/html", INDEX_HTML); });
 
-  // Send a POST request to <IP>/post with a form field message set to <message>
   server.on("/login", HTTP_POST, [this](AsyncWebServerRequest *request){
         String uid = "";
         String pwd = "";
