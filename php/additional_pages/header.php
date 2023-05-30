@@ -6,7 +6,7 @@ session_start();
 <!-- Carica gli stylesheet e JS e fa partire la sessione -->
 <head>
     <meta charset="utf-8">
-    <title>Tavoletta grafica</title>
+    <title>GTab</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=DM Sans'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
