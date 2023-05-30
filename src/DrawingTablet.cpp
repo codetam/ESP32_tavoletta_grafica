@@ -128,7 +128,12 @@ void DrawingTablet::stringify(){
   int k = 0;
   for(int i=0; i<MAX_X; i++){
     for(int j=0; j<MAX_Y; j++){
-      pixelString[k] = pixelMatrix[i][j];
+      if(pixelMatrix[i][j] == 'D'){
+        pixelString[k] = prevColor;
+      }
+      else{
+        pixelString[k] = pixelMatrix[i][j];
+      }
       k++;
     }
   }

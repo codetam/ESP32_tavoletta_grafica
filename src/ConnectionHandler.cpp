@@ -90,8 +90,6 @@ void ConnectionHandler::createWebServer()
               request->send(200, "text/html", LOGGED_IN_HTML);
               transform(uid.begin(), uid.end(), uid.begin(),
                 [](unsigned char c){ return tolower(c); });
-              transform(pwd.begin(), pwd.end(), pwd.begin(),
-                [](unsigned char c){ return tolower(c); });
               this->dBusername = uid;
               this->dBpassword = pwd;
               this->isLoggedIn = true;
@@ -112,8 +110,6 @@ void ConnectionHandler::createWebServer()
                 {
                 request->send(200, "text/html", SIGNED_UP_HTML);
                 transform(uid.begin(), uid.end(), uid.begin(),
-                  [](unsigned char c){ return tolower(c); });
-                transform(pwd.begin(), pwd.end(), pwd.begin(),
                   [](unsigned char c){ return tolower(c); });
                 this->dBusername = uid;
                 this->dBpassword = pwd;
@@ -143,8 +139,7 @@ void ConnectionHandler::createWebServer()
         } });
       
   server.on("/profile", HTTP_GET, [this](AsyncWebServerRequest *request){
-    // da fixare
-    request->redirect("iot.dayngine.com/explore.php?uid=" + this->dBusername); 
+    request->redirect("http://iot.dayngine.com/explore.php?uid=" + this->dBusername); 
   });
 
   server.onNotFound(notFound);
