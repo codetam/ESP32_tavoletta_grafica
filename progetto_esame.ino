@@ -95,6 +95,9 @@ void controllerButtonPressed()                                      // Se il con
         case connect:
           manager->switchToConnectingMode();
           break;
+        case reset:
+          manager->switchToTablet();
+          break;
         default:
           manager->switchToTablet();
           break;
@@ -248,6 +251,10 @@ void loop()
       }
       else if(tablet->getMode() == coloring){
         display->setState(lcd_coloring);
+      }
+      if(menu->getSelection() == reset){
+        tablet->initialize();
+        menu->switchSelection(right);
       }
       xSemaphoreTake(mutex, portMAX_DELAY);
       tablet->print();                                                        // Viene svuotato il menu e ricaricato il disegno precedente

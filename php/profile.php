@@ -4,17 +4,8 @@ include_once "additional_pages/header.php";
 
 <div id="content">
     <div id="header">
-        <form action="/explore.php" method="get">
-            <div class="search-container">
-                <input type="text" placeholder="Search..." name="uid" class="search-input" />
-                <button type="submit" class="search-button">
-                    <div class="search-button-container">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </button>
-            </div>
-        </form>
         <?php
+        include_once "additional_pages/search.php";
         if (isset($_SESSION["uid"])) { // Controlla che la SESSION sia stata avviata (l'utente è loggato)
 
             require_once 'includes/db.access.php';
@@ -57,14 +48,14 @@ include_once "additional_pages/header.php";
                                         imagedestroy(drawImage($image['code']));
                                     ?>
                                 </div>
-                                <div class="lightbox-buttons">
+                                <div class="lightbox-profile-buttons">
                                     <!-- Codice per i button Carica e Elimina -->
                                     <form action="delete_image.php" method="post">
-                                        <button type="submit" name="submit" class="delete-button">Elimina</button>
+                                        <button type="submit" name="submit" class="profile-delete-button">Elimina</button>
                                         <?php echo '<input type="hidden" name="image" value="' . $image['imageId'] . '">' ?>
                                     </form>
                                     <form action="load_id_to_esp.php" method="post">
-                                        <button type="submit" name="submit" class="load-button">Carica</button>
+                                        <button type="submit" name="submit" class="profile-load-button">Carica</button>
                                         <?php echo '<input type="hidden" name="image" value="' . $image['imageId'] . '">' ?>
                                     </form>
                                 </div>

@@ -22,7 +22,7 @@ session_start();
     <div class="wrapper">
         <ul>
             <li class="top-buttons">
-                <img src="/additional_pages/logo.png" alt="logo">
+                <img src="/additional_pages/logo_webapp.png" alt="logo">
                 <br>
                 <a class ="explore-button" href=/explore.php>Esplora</a>
             <?php

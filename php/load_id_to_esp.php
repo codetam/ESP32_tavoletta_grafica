@@ -10,7 +10,7 @@ use \PhpMqtt\Client\ConnectionSettings;
 if (isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit'])) {
     $uid = $_SESSION['uid'];
     $imageId = $_POST['image'];
-    $clientId = 3;
+    $clientId = 1;
     $server = 'iot.dayngine.com';
     $port = 1883;
     $username = 'gtab_user';
@@ -23,8 +23,8 @@ if (isset($_SESSION['uid']) && isset($_POST['image']) && isset($_POST['submit'])
         ->setPassword($password)
         ->setKeepAliveInterval(60)
         ->setLastWillTopic('gtab/' . $uid . '/last-will')
-        ->setLastWillMessage('client disconnect')
-        ->setLastWillQualityOfService(2);
+        ->setLastWillMessage('Server disconnected')
+        ->setLastWillQualityOfService(0);
 
     $mqtt = new MqttClient($server, $port, $clientId, $mqtt_version);
 

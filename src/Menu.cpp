@@ -41,6 +41,9 @@ void Menu::switchSelection(direction current_direction){
         current_selection = save_drawing;
         break;
       case save_drawing:
+        current_selection = reset;
+        break;
+      case reset:
         current_selection = draw;
         break;
     }
@@ -48,7 +51,7 @@ void Menu::switchSelection(direction current_direction){
   else if(current_direction == left){
     switch(current_selection){
       case draw:
-        current_selection = save_drawing;
+        current_selection = reset;
         break;
       case change_color:
         current_selection = draw;
@@ -64,6 +67,9 @@ void Menu::switchSelection(direction current_direction){
         break;
       case save_drawing:
         current_selection = load_drawing;
+        break;
+      case reset:
+        current_selection = save_drawing;
         break;
     }
   }
@@ -127,4 +133,12 @@ void Menu::printSelection(){
     else 
       tft->setTextColor(TFT_BLACK, TFT_WHITE);
     tft->drawString("Salva", 460, 220, GFXFF);
+
+    //Very-Bottom center
+    tft->setTextDatum(BC_DATUM);
+    if(current_selection == reset)
+      tft->setTextColor(TFT_BLACK, TFT_YELLOW);
+    else 
+      tft->setTextColor(TFT_BLACK, TFT_WHITE);
+    tft->drawString("Reset", 240, 300, GFXFF);
 }

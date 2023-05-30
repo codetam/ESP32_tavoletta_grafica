@@ -6,18 +6,9 @@ include_once 'includes/get_images.php';
 
 <body>
     <div id="content">
-        <div id="header">
-            <form action="/explore.php" method="get">
-                <div class="search-container">
-                    <input type="text" placeholder="Search..." name="uid" class="search-input" />
-                    <button type="submit" class="search-button">
-                        <div class="search-button-container">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </button>
-                </div>
-            </form>
+        <div id="header">   
             <?php
+            include_once "additional_pages/search.php";
             if ($showHub) {                     // Non è stata mandata nessuna GET
                 echo '
                     <h1>
@@ -59,6 +50,9 @@ include_once 'includes/get_images.php';
                                     ?>
                                 </div>
                                 <div class="lightbox-buttons">
+                                    <?php 
+                                        echo '<h1><div class="lightbox-text">' . getUsernameFromUid($conn, $image['userID']) . '</div></h1>';
+                                    ?>
                                     <!-- Codice per il button Carica -->
                                     <form action="load_id_to_esp.php" method="post">
                                         <button type="submit" name="submit" class="load-button">Carica</button>

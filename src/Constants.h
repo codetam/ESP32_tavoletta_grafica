@@ -43,7 +43,8 @@ enum menu_selection{
     color,
     connect,
     load_drawing,
-    save_drawing
+    save_drawing,
+    reset
 };
 
 enum tablet_mode{
